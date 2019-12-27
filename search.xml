@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>two</title>
-    <url>/2019/12/27/two/</url>
+    <title>three</title>
+    <url>/2019/12/27/three/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
+    <title>随笔</title>
+    <url>/2019/12/27/%E9%9A%8F%E7%AC%94/</url>
+    <content><![CDATA[<h3 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h3><a id="more"></a>
+<p>这是自己做的笔记</p>
+]]></content>
+      <categories>
+        <category>传统文化</category>
+      </categories>
+      <tags>
+        <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>first</title>
-    <url>/2019/12/27/first/</url>
+    <url>/2019/12/27/%E7%AE%97%E6%B3%95%E8%AE%AD%E7%BB%83%E8%90%A5/</url>
     <content><![CDATA[<h2 id="算法训练营"><a href="#算法训练营" class="headerlink" title="算法训练营"></a>算法训练营</h2><h2 id="预习周"><a href="#预习周" class="headerlink" title="预习周"></a>预习周</h2><a id="more"></a>
 <h3 id="第一课-数据结构和算法总览"><a href="#第一课-数据结构和算法总览" class="headerlink" title="第一课 数据结构和算法总览"></a>第一课 数据结构和算法总览</h3><h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><ul>
 <li><a href="http://naotu.baidu.com/file/b832f043e2ead159d584cca4efb19703?token=7a6a56eb2630548c" target="_blank" rel="noopener">数据结构脑图</a></li>
@@ -1276,13 +1289,11 @@ static int RabinKarpSerach(String txt, String pat) {
 </ul>
 ]]></content>
       <categories>
-        <category>分类1</category>
-        <category>分类2</category>
+        <category>Java</category>
       </categories>
       <tags>
-        <tag>标签1</tag>
-        <tag>标签2</tag>
-        <tag>标签3</tag>
+        <tag>算法</tag>
+        <tag>编程语言</tag>
       </tags>
   </entry>
 </search>
