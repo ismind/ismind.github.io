@@ -1,9 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>three</title>
-    <url>/2019/12/27/three/</url>
-    <content><![CDATA[]]></content>
+    <title>20191231</title>
+    <url>/2019/12/31/20191231/</url>
+    <content><![CDATA[<h3 id="77-Combinations"><a href="#77-Combinations" class="headerlink" title="77. Combinations"></a>77. Combinations</h3><a id="more"></a>
+<p>这题自己“照着题解”默写了一遍，请看：</p>
+<pre><code class="lang-java">  public static List&lt;List&lt;Integer&gt;&gt; combine(int n, int k) {
+        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+        helper(res, new ArrayList&lt;Integer&gt;(), n, k, 1);
+        return res;
+    }
+
+    private static void helper(List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; list, int n, int k, int start) {
+        //terminator
+        //[[1, 2], [1, 2], [1, 2], [1, 3], [1, 3], [1, 4], [2, 3], [2, 3], [2, 4], [3, 4]]
+        if (k &lt; 0) {
+            res.add(list);
+            return;
+        }
+        for (int i = start; i &lt;= n - k + 1; i++) {
+            List&lt;Integer&gt; tmp = new ArrayList&lt;Integer&gt;(list);
+            tmp.add(i);
+            helper(res, tmp, n, k - 1, i + 1);
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+</code></pre>
+<p>为什么结果里有重复的？</p>
+<p>答案是在if里</p>
+<p>请看正确题解：</p>
+<pre><code class="lang-java">public static List&lt;List&lt;Integer&gt;&gt; combine(int n, int k) {
+        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+        helper(res, new ArrayList&lt;Integer&gt;(), n, k, 1);
+        return res;
+    }
+
+    private static void helper(List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; tmp, int n, int k, int start) {
+        if (k == 0) {
+            //[[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
+            res.add(new ArrayList&lt;Integer&gt;(tmp));
+            return;
+        }
+        //why not use i &lt;= n?
+        //why the cost is 28 ms when using i &lt;= n ?
+        //However the cost is 2ms to use i &lt;= n - k + 1.
+        for (int i = start; i &lt;= n - k + 1; i++) {
+            tmp.add(i);
+            helper(res, tmp, n, k - 1, i + 1);
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+</code></pre>
+<h3 id="46-Permutations"><a href="#46-Permutations" class="headerlink" title="46. Permutations"></a>46. Permutations</h3><p>如何避免反复添加数组中的元素呢？</p>
+<pre><code class="lang-java">tempList.contains(nums[i])
+</code></pre>
+<pre><code class="lang-java">public static List&lt;List&lt;Integer&gt;&gt; permute(int[] nums) {
+        List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+        // Arrays.sort(nums); // not necessary
+        backtrack(list, new ArrayList&lt;Integer&gt;(), nums);
+        return list;
+    }
+
+    private static void backtrack(List&lt;List&lt;Integer&gt;&gt; list, List&lt;Integer&gt; tempList, int [] nums){
+        if(tempList.size() == nums.length){
+            list.add(new ArrayList&lt;Integer&gt;(tempList));
+        } else{
+            for(int i = 0; i &lt; nums.length; i++){
+                if(tempList.contains(nums[i])) continue; // element already exists, skip
+                tempList.add(nums[i]);
+                backtrack(list, tempList, nums);
+                tempList.remove(tempList.size() - 1);
+            }
+        }
+    }
+</code></pre>
+]]></content>
+      <categories>
+        <category>算法和数据结构</category>
+      </categories>
+      <tags>
+        <tag>递归</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>随笔1</title>
+    <url>/2019/12/28/%E9%9A%8F%E7%AC%941/</url>
+    <content><![CDATA[<h3 id="从一道算法题看出自己的基础有缺陷"><a href="#从一道算法题看出自己的基础有缺陷" class="headerlink" title="从一道算法题看出自己的基础有缺陷"></a>从一道算法题看出自己的基础有缺陷</h3><h4 id="leetcode50-pow-x-n"><a href="#leetcode50-pow-x-n" class="headerlink" title="leetcode50  pow(x, n)"></a>leetcode50  pow(x, n)</h4><a id="more"></a>
+<h5 id="第一种解法"><a href="#第一种解法" class="headerlink" title="第一种解法"></a>第一种解法</h5><pre><code class="lang-java">if (n == 0)return 1;
+        if (n &lt; 0) {
+            x = 1 / x; n = -n;
+        }
+        double current = x;
+        double ans = 1;
+        for (int i = n; i &gt; 0; i /= 2) {
+            if (i % 2 == 1) {
+                ans = ans * current;
+            }
+            current = current * current;
+        }
+        return ans;
+</code></pre>
+<h5 id="第二种解法"><a href="#第二种解法" class="headerlink" title="第二种解法"></a>第二种解法</h5><pre><code>long N = n;
+        if (N &lt; 0) {
+            x = 1 / x;
+            N = -N;
+        }
+        double ans = 1;
+        double current_product = x;
+        for (long i = N; i &gt; 0; i /= 2) {
+            if ((i % 2) == 1) {
+                ans = ans * current_product;
+            }
+            current_product = current_product * current_product;
+        }
+        return ans;
+</code></pre><p>​    当x=2.00000 , n = -2147483648，第一种解法始终为1.0，第二种解法才是正确的。</p>
+<p>​    你会发现 - Integer.MIN_VALUE 并不等于Integer.MAX_VALUE,</p>
+<p>​    由此可知，这里是知识误区！</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+      </tags>
   </entry>
   <entry>
     <title>随笔</title>
@@ -21,12 +141,14 @@
   <entry>
     <title>first</title>
     <url>/2019/12/27/%E7%AE%97%E6%B3%95%E8%AE%AD%E7%BB%83%E8%90%A5/</url>
-    <content><![CDATA[<h2 id="算法训练营"><a href="#算法训练营" class="headerlink" title="算法训练营"></a>算法训练营</h2><h2 id="预习周"><a href="#预习周" class="headerlink" title="预习周"></a>预习周</h2><a id="more"></a>
-<h3 id="第一课-数据结构和算法总览"><a href="#第一课-数据结构和算法总览" class="headerlink" title="第一课 数据结构和算法总览"></a>第一课 数据结构和算法总览</h3><h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><ul>
+    <content><![CDATA[<h2 id="算法训练营"><a href="#算法训练营" class="headerlink" title="算法训练营"></a>算法训练营</h2><h2 id=""><a href="#" class="headerlink" title=" "></a> </h2><h2 id="预习周"><a href="#预习周" class="headerlink" title="预习周"></a>预习周</h2><a id="more"></a>
+<h2 id="第一课-数据结构和算法总览"><a href="#第一课-数据结构和算法总览" class="headerlink" title="第一课     数据结构和算法总览"></a>第一课     数据结构和算法总览</h2><p><strong>参考链接</strong></p>
+<ul>
 <li><a href="http://naotu.baidu.com/file/b832f043e2ead159d584cca4efb19703?token=7a6a56eb2630548c" target="_blank" rel="noopener">数据结构脑图</a></li>
 <li><a href="http://naotu.baidu.com/file/0a53d3a5343bd86375f348b2831d3610?token=5ab1de1c90d5f3ec" target="_blank" rel="noopener">算法脑图</a></li>
 </ul>
-<h3 id="第二课-训练准备和复杂度分析"><a href="#第二课-训练准备和复杂度分析" class="headerlink" title="第二课 训练准备和复杂度分析"></a>第二课 训练准备和复杂度分析</h3><h4 id="1-训练环境设置、编码技巧和Code-Style"><a href="#1-训练环境设置、编码技巧和Code-Style" class="headerlink" title="1. 训练环境设置、编码技巧和Code Style"></a>1. 训练环境设置、编码技巧和Code Style</h4><h5 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h5><ul>
+<h2 id="第二课-训练准备和复杂度分析"><a href="#第二课-训练准备和复杂度分析" class="headerlink" title="第二课     训练准备和复杂度分析"></a>第二课     训练准备和复杂度分析</h2><h3 id="1-训练环境设置、编码技巧和Code-Style"><a href="#1-训练环境设置、编码技巧和Code-Style" class="headerlink" title="1.     训练环境设置、编码技巧和Code Style"></a>1.     训练环境设置、编码技巧和Code Style</h3><p>参考链接：</p>
+<ul>
 <li><a href="http://github.com/microsoft/terminal" target="_blank" rel="noopener">Windows Microsoft New Terminal</a></li>
 <li><a href="http://vscodethemes.com/" target="_blank" rel="noopener">VS Code Themes</a></li>
 <li><a href="http://toutiao.io/posts/7w5ixl/preview" target="_blank" rel="noopener">教你打造一款颜值逆天的 VS Code</a></li>
@@ -34,12 +156,14 @@
 <li><a href="http://markhneedham.com/blog/2008/09/15/clean-code-book-review/" target="_blank" rel="noopener">自顶向下的编程方式</a></li>
 <li><a href="http://leetcode-cn.com/problems/valid-palindrome/" target="_blank" rel="noopener">自顶向下编程的 LeetCode 例题</a></li>
 </ul>
-<h4 id="2-时间复杂度和空间复杂度分析"><a href="#2-时间复杂度和空间复杂度分析" class="headerlink" title="2. 时间复杂度和空间复杂度分析"></a>2. 时间复杂度和空间复杂度分析</h4><h5 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h3 id="2-时间复杂度和空间复杂度分析"><a href="#2-时间复杂度和空间复杂度分析" class="headerlink" title="2.      时间复杂度和空间复杂度分析"></a>2.      时间复杂度和空间复杂度分析</h3><p>参考链接</p>
+<ul>
 <li><a href="http://www.zhihu.com/question/21387264" target="_blank" rel="noopener">如何理解算法时间复杂度的表示法</a></li>
 <li><a href="http://en.wikipedia.org/wiki/Master_theorem_(analysis_of_algorithms" target="_blank" rel="noopener">Master theorem</a>)</li>
 <li><a href="http://zh.wikipedia.org/wiki/主定理" target="_blank" rel="noopener">主定理</a></li>
 </ul>
-<h2 id="第一周"><a href="#第一周" class="headerlink" title="第一周"></a>第一周</h2><h3 id="第三课-数组、链表、跳表"><a href="#第三课-数组、链表、跳表" class="headerlink" title="第三课 数组、链表、跳表"></a>第三课 数组、链表、跳表</h3><h4 id="1-数组、链表、跳表的基本实现和特性"><a href="#1-数组、链表、跳表的基本实现和特性" class="headerlink" title="1. 数组、链表、跳表的基本实现和特性"></a>1. 数组、链表、跳表的基本实现和特性</h4><h5 id="参考链接-2"><a href="#参考链接-2" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h2 id="-1"><a href="#-1" class="headerlink" title=" "></a> </h2><h2 id="第一周"><a href="#第一周" class="headerlink" title="第一周"></a>第一周</h2><h2 id="第三课-数组、链表、跳表"><a href="#第三课-数组、链表、跳表" class="headerlink" title="第三课     数组、链表、跳表"></a>第三课     数组、链表、跳表</h2><h3 id="1-数组、链表、跳表的基本实现和特性"><a href="#1-数组、链表、跳表的基本实现和特性" class="headerlink" title="1.      数组、链表、跳表的基本实现和特性"></a>1.      数组、链表、跳表的基本实现和特性</h3><p>参考链接</p>
+<ul>
 <li><a href="http://developer.classpath.org/doc/java/util/ArrayList-source.html" target="_blank" rel="noopener">Java 源码分析（ArrayList）</a></li>
 <li><a href="http://www.geeksforgeeks.org/implementing-a-linked-list-in-java-using-class/" target="_blank" rel="noopener">Linked List 的标准实现代码</a></li>
 <li><a href="http://www.cs.cmu.edu/~adamchik/15-121/lectures/Linked Lists/code/LinkedList.java" target="_blank" rel="noopener">Linked List 示例代码</a></li>
@@ -47,33 +171,38 @@
 <li>LRU Cache - Linked list：<a href="http://leetcode-cn.com/problems/lru-cache" target="_blank" rel="noopener"> LRU 缓存机制</a></li>
 <li>Redis - Skip List：<a href="http://redisbook.readthedocs.io/en/latest/internal-datastruct/skiplist.html" target="_blank" rel="noopener">跳跃表</a>、<a href="http://www.zhihu.com/question/20202931" target="_blank" rel="noopener">为啥 Redis 使用跳表（Skip List）而不是使用 Red-Black？</a></li>
 </ul>
-<h4 id="2-实战题目解析：移动零"><a href="#2-实战题目解析：移动零" class="headerlink" title="2. 实战题目解析：移动零"></a>2. 实战题目解析：移动零</h4><h5 id="Array-实战题目"><a href="#Array-实战题目" class="headerlink" title="Array 实战题目"></a>Array 实战题目</h5><ul>
+<h3 id="2-实战题目解析：移动零"><a href="#2-实战题目解析：移动零" class="headerlink" title="2.      实战题目解析：移动零"></a>2.      实战题目解析：移动零</h3><p>Array 实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/container-with-most-water/</a></li>
 <li><a href="https://leetcode-cn.com/problems/move-zeroes/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/move-zeroes/</a></li>
 <li><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">https://leetcode.com/problems/climbing-stairs/</a></li>
 <li><a href="https://leetcode-cn.com/problems/3sum/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/3sum/ </a>(高频老题）</li>
 </ul>
-<h4 id="3-实战题目解析：盛水最多的容器、爬楼梯"><a href="#3-实战题目解析：盛水最多的容器、爬楼梯" class="headerlink" title="3. 实战题目解析：盛水最多的容器、爬楼梯"></a>3. 实战题目解析：盛水最多的容器、爬楼梯</h4><h5 id="Array-实战题目-1"><a href="#Array-实战题目-1" class="headerlink" title="Array 实战题目"></a>Array 实战题目</h5><ul>
+<h3 id="3-实战题目解析：盛水最多的容器、爬楼梯"><a href="#3-实战题目解析：盛水最多的容器、爬楼梯" class="headerlink" title="3.      实战题目解析：盛水最多的容器、爬楼梯"></a>3.      实战题目解析：盛水最多的容器、爬楼梯</h3><p>Array 实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/container-with-most-water/</a></li>
 <li><a href="https://leetcode-cn.com/problems/move-zeroes/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/move-zeroes/</a></li>
 <li><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">https://leetcode.com/problems/climbing-stairs/</a></li>
 <li><a href="https://leetcode-cn.com/problems/3sum/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/3sum/ </a>(高频老题）</li>
 </ul>
-<h4 id="4-实战题目解析：3数之和、环形链表"><a href="#4-实战题目解析：3数之和、环形链表" class="headerlink" title="4. 实战题目解析：3数之和、环形链表"></a>4. 实战题目解析：3数之和、环形链表</h4><p>两数之和题目：<a href="https://leetcode-cn.com/problems/two-sum/" target="_blank" rel="noopener"> https://leetcode-cn.com/problems/two-sum/</a></p>
-<h5 id="Array-实战题目-2"><a href="#Array-实战题目-2" class="headerlink" title="Array 实战题目"></a>Array 实战题目</h5><ul>
+<h3 id="4-实战题目解析：3数之和、环形链表"><a href="#4-实战题目解析：3数之和、环形链表" class="headerlink" title="4.      实战题目解析：3数之和、环形链表"></a>4.      实战题目解析：3数之和、环形链表</h3><p>两数之和题目：<a href="https://leetcode-cn.com/problems/two-sum/" target="_blank" rel="noopener"> https://leetcode-cn.com/problems/two-sum/</a></p>
+<p>Array 实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/container-with-most-water/</a></li>
 <li><a href="https://leetcode-cn.com/problems/move-zeroes/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/move-zeroes/</a></li>
 <li><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">https://leetcode.com/problems/climbing-stairs/</a></li>
 <li><a href="https://leetcode-cn.com/problems/3sum/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/3sum/ </a>(高频老题）</li>
 </ul>
-<h5 id="Linked-List-实战题目"><a href="#Linked-List-实战题目" class="headerlink" title="Linked List 实战题目"></a>Linked List 实战题目</h5><ul>
+<p>Linked List 实战题目</p>
+<ul>
 <li><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">https://leetcode.com/problems/reverse-linked-list/</a></li>
 <li><a href="https://leetcode.com/problems/swap-nodes-in-pairs" target="_blank" rel="noopener">https://leetcode.com/problems/swap-nodes-in-pairs</a></li>
 <li><a href="https://leetcode.com/problems/linked-list-cycle" target="_blank" rel="noopener">https://leetcode.com/problems/linked-list-cycle</a></li>
 <li><a href="https://leetcode.com/problems/linked-list-cycle-ii" target="_blank" rel="noopener">https://leetcode.com/problems/linked-list-cycle-ii</a></li>
 <li><a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="noopener">https://leetcode.com/problems/reverse-nodes-in-k-group/</a></li>
 </ul>
-<h5 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/</a></li>
 <li><a href="https://leetcode-cn.com/problems/rotate-array/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/rotate-array/</a></li>
 <li><a href="https://leetcode-cn.com/problems/merge-two-sorted-lists/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/merge-two-sorted-lists/</a></li>
@@ -83,44 +212,53 @@
 <li><a href="https://leetcode-cn.com/problems/plus-one/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/plus-one/</a></li>
 </ul>
 <p><a href="http://u.geekbang.org/lesson/1?article=144228" target="_blank" rel="noopener">戳此了解每周课后作业要求及提交方式</a></p>
-<h3 id="第四课-栈、队列、优先队列、双端队列"><a href="#第四课-栈、队列、优先队列、双端队列" class="headerlink" title="第四课 栈、队列、优先队列、双端队列"></a>第四课 栈、队列、优先队列、双端队列</h3><h4 id="1-栈和队列的实现与特性"><a href="#1-栈和队列的实现与特性" class="headerlink" title="1. 栈和队列的实现与特性"></a>1. 栈和队列的实现与特性</h4><h5 id="参考链接-3"><a href="#参考链接-3" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h2 id="第四课-栈、队列、优先队列、双端队列"><a href="#第四课-栈、队列、优先队列、双端队列" class="headerlink" title="第四课     栈、队列、优先队列、双端队列"></a>第四课     栈、队列、优先队列、双端队列</h2><h3 id="1-栈和队列的实现与特性"><a href="#1-栈和队列的实现与特性" class="headerlink" title="1.      栈和队列的实现与特性"></a>1.      栈和队列的实现与特性</h3><p>参考链接</p>
+<ul>
 <li><a href="http://docs.oracle.com/javase/10/docs/api/java/util/PriorityQueue.html" target="_blank" rel="noopener">Java 的 PriorityQueue 文档</a></li>
 <li><a href="http://developer.classpath.org/doc/java/util/Stack-source.html" target="_blank" rel="noopener">Java 的 Stack 源码</a></li>
 <li><a href="http://fuseyism.com/classpath/doc/java/util/Queue-source.html" target="_blank" rel="noopener">Java 的 Queue 源码</a></li>
 <li><a href="http://docs.python.org/2/library/heapq.html" target="_blank" rel="noopener">Python 的 heapq</a></li>
 <li><a href="http://docs.python.org/2/library/collections.html" target="_blank" rel="noopener">高性能的 container 库</a></li>
 </ul>
-<h4 id="2-实战题目解析：有效的括号、最小栈等问题"><a href="#2-实战题目解析：有效的括号、最小栈等问题" class="headerlink" title="2. 实战题目解析：有效的括号、最小栈等问题"></a>2. 实战题目解析：有效的括号、最小栈等问题</h4><h5 id="预习题目"><a href="#预习题目" class="headerlink" title="预习题目"></a>预习题目</h5><ul>
+<h3 id="2-实战题目解析：有效的括号、最小栈等问题"><a href="#2-实战题目解析：有效的括号、最小栈等问题" class="headerlink" title="2.     实战题目解析：有效的括号、最小栈等问题"></a>2.     实战题目解析：有效的括号、最小栈等问题</h3><p>预习题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/valid-parentheses/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-parentheses/</a></li>
 <li><a href="https://leetcode-cn.com/problems/min-stack/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/min-stack/</a></li>
 </ul>
-<h5 id="实战题目"><a href="#实战题目" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+<p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/largest-rectangle-in-histogram" target="_blank" rel="noopener">https://leetcode-cn.com/problems/largest-rectangle-in-histogram</a></li>
 <li><a href="https://leetcode-cn.com/problems/sliding-window-maximum" target="_blank" rel="noopener">https://leetcode-cn.com/problems/sliding-window-maximum</a></li>
 </ul>
-<h5 id="课后作业-1"><a href="#课后作业-1" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li>用 add first 或 add last 这套新的 API 改写 Deque 的代码</li>
 <li>分析 Queue 和 Priority Queue 的源码</li>
 <li><a href="https://leetcode.com/problems/design-circular-deque" target="_blank" rel="noopener">https://leetcode.com/problems/design-circular-deque</a></li>
 <li><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="noopener">https://leetcode.com/problems/trapping-rain-water/</a></li>
 </ul>
 <p>说明：改写代码和分析源码这两项作业，同学们需要在第 1 周的学习总结中完成。如果不熟悉 Java 语言，这两项作业可选做。</p>
-<h2 id="第二周"><a href="#第二周" class="headerlink" title="第二周"></a>第二周</h2><h3 id="第五课-哈希表、映射、集合"><a href="#第五课-哈希表、映射、集合" class="headerlink" title="第五课 哈希表、映射、集合"></a>第五课 哈希表、映射、集合</h3><h4 id="1-哈希表、映射、集合的实现与特性"><a href="#1-哈希表、映射、集合的实现与特性" class="headerlink" title="1. 哈希表、映射、集合的实现与特性"></a>1. 哈希表、映射、集合的实现与特性</h4><h5 id="参考链接-4"><a href="#参考链接-4" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h2 id="-2"><a href="#-2" class="headerlink" title=" "></a> </h2><h2 id="第二周"><a href="#第二周" class="headerlink" title="第二周"></a>第二周</h2><h2 id="第五课-哈希表、映射、集合"><a href="#第五课-哈希表、映射、集合" class="headerlink" title="第五课     哈希表、映射、集合"></a>第五课     哈希表、映射、集合</h2><h3 id="1-哈希表、映射、集合的实现与特性"><a href="#1-哈希表、映射、集合的实现与特性" class="headerlink" title="1.      哈希表、映射、集合的实现与特性"></a>1.      哈希表、映射、集合的实现与特性</h3><p>参考链接</p>
+<ul>
 <li><a href="http://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/Set.html" target="_blank" rel="noopener">Java Set 文档</a></li>
 <li><a href="http://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/Map.html" target="_blank" rel="noopener">Java Map 文档</a></li>
 </ul>
-<h5 id="课后作业-2"><a href="#课后作业-2" class="headerlink" title="课后作业"></a>课后作业</h5><p>写一个关于 HashMap 的小总结。<br>说明：对于不熟悉 Java 语言的同学，此项作业可选做。</p>
-<h4 id="2-实战题目解析：有效的字母异位词等问题"><a href="#2-实战题目解析：有效的字母异位词等问题" class="headerlink" title="2. 实战题目解析：有效的字母异位词等问题"></a>2. 实战题目解析：有效的字母异位词等问题</h4><h5 id="实战题目-课后作业"><a href="#实战题目-课后作业" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h5><ul>
+<p>课后作业</p>
+<p>写一个关于 HashMap 的小总结。</p>
+<p>说明：对于不熟悉 Java 语言的同学，此项作业可选做。</p>
+<h3 id="2-实战题目解析：有效的字母异位词等问题"><a href="#2-实战题目解析：有效的字母异位词等问题" class="headerlink" title="2.      实战题目解析：有效的字母异位词等问题"></a>2.      实战题目解析：有效的字母异位词等问题</h3><p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/valid-anagram/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-anagram/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/group-anagrams/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/group-anagrams/</a></li>
 <li><a href="https://leetcode-cn.com/problems/two-sum/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/two-sum/description/</a></li>
 </ul>
-<h5 id="参考链接-5"><a href="#参考链接-5" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<p>参考链接</p>
+<ul>
 <li><h6 id="养成收藏精选代码的习惯（示例）"><a href="#养成收藏精选代码的习惯（示例）" class="headerlink" title="养成收藏精选代码的习惯（示例）"></a><a href="http://shimo.im/docs/R6g9WJV89QkHrDhr" target="_blank" rel="noopener">养成收藏精选代码的习惯（示例）</a></h6></li>
 </ul>
-<h6 id="Anagram-group-anagrams-two-sum"><a href="#Anagram-group-anagrams-two-sum" class="headerlink" title="Anagram, group-anagrams, two sum"></a>Anagram, group-anagrams, two sum</h6><pre><code class="lang-java">Valid anagram
-
-# 思路：手动模拟hashtable，将字符串”a-z“的ASCII码作key，计数求差异    
+<p>Anagram, group-anagrams, two sum</p>
+<p>1）Valid anagram</p>
+<pre><code># 思路：手动模拟hashtable，将字符串”a-z“的ASCII码作key，计数求差异    
    def  isAnagram(self, s: str, t: str) -&gt; bool:
         arr1, arr2 = [0]*26, [0]*26
         for i in s:
@@ -128,9 +266,7 @@
         for i in t:
             arr2[ord(i) - ord(&#39;a&#39;)] += 1
         return arr1 == arr2
-
-
-# 思路：map计数，对比计数差异
+</code></pre><pre><code># 思路：map计数，对比计数差异
     def isAnagram(self, s: str, t: str) -&gt; bool:
         dict1, dict2 = {}, {}
         for item in s:
@@ -138,14 +274,10 @@
         for item in t:
             dict2[item] = dict2.get(item,0) + 1
         return dict1 == dict2
-
-
-# 思路：数组排序后比较差异
+</code></pre><pre><code># 思路：数组排序后比较差异
     def isAnagram(self, s: str, t: str) -&gt; bool:
         return sorted(s) == sorted(t)
-
-
-public class Solution {
+</code></pre><pre><code>public class Solution {
     public boolean isAnagram(String s, String t) {
         if(s.length() != t.length()) return false;
         int [] a = new int [26];
@@ -157,47 +289,33 @@ public class Solution {
         return true;
     }
 }
-
-
-    public boolean isAnagram(String s1, String s2) {
-        int[] freq = new int[256];
-        for(int i = 0; i &lt; s1.length(); i++) freq[s1.charAt(i)]++;
-        for(int i = 0; i &lt; s2.length(); i++) if(--freq[s2.charAt(i)] &lt; 0) return false;
-        return s1.length() == s2.length();
-    }
-
-
-public boolean isAnagram(String s, String t) 
-{
+</code></pre><pre><code>public boolean isAnagram(String s1, String s2) {
+    int[] freq = new int[256];
+    for(int i = 0; i &lt; s1.length(); i++) freq[s1.charAt(i)]++;
+    for(int i = 0; i &lt; s2.length(); i++) if(--freq[s2.charAt(i)] &lt; 0) return false;
+    return s1.length() == s2.length();
+}
+</code></pre><pre><code>public boolean isAnagram(String s, String t) {
     char[] sChar = s.toCharArray();
     char[] tChar = t.toCharArray();
     Arrays.sort(sChar);
     Arrays.sort(tChar);
     return Arrays.equals(sChar, tChar);   
 }
-
-
-Group Anagrams:
-
-
-
-def groupAnagrams(self, strs):
+</code></pre><p>2）Group Anagrams:</p>
+<pre><code>def groupAnagrams(self, strs):
     d = {}
     for w in sorted(strs):
         key = tuple(sorted(w))
         d[key] = d.get(key, []) + [w]
     return d.values()
-
-
-def groupAnagrams(self, strs):
+</code></pre><pre><code>def groupAnagrams(self, strs):
     dic = {}
     for item in sorted(strs):
         sortedItem = &#39;&#39;.join(sorted(item))
         dic[sortedItem] = dic.get(sortedItem, []) + [item]
     return dic.values()
-
-
-public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
+</code></pre><pre><code>public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
     List&lt;List&lt;String&gt;&gt; res = new ArrayList&lt;&gt;();
     HashMap&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();
 
@@ -219,57 +337,52 @@ public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
     }
     return res;
 }
-
-
-
-
-Two sum
-
-
-
-    def twoSum(self, nums, target):
+</code></pre><p>3）Two sum</p>
+<pre><code>def twoSum(self, nums, target):
         d = dict()
         for index,num in enumerate(nums):
             if d.get(num) == None:
                 d[target - num] = index
             else:
                 return [d.get(num), index]
-
-
-public int[] twoSum(int[] nums, int target) {
-        HashMap&lt;Integer, Integer&gt; tracker = 
-            new HashMap&lt;Integer, Integer&gt;();
-        int len = nums.length;
-        for (int i = 0; i &lt; len; i++){
-            if (tracker.containsKey(nums[i])){
-                int left = tracker.get(nums[i]);
-                return new int[]{left+1, i+1};
-            } else {
-                tracker.put(target - nums[i], i);
-            }
-        }
-        return new int[2];
-    }
-</code></pre>
-<h3 id="第六课-树、二叉树、二叉搜索树"><a href="#第六课-树、二叉树、二叉搜索树" class="headerlink" title="第六课 树、二叉树、二叉搜索树"></a>第六课 树、二叉树、二叉搜索树</h3><h4 id="1-树、二叉树、二叉搜索树的实现和特性"><a href="#1-树、二叉树、二叉搜索树的实现和特性" class="headerlink" title="1. 树、二叉树、二叉搜索树的实现和特性"></a>1. 树、二叉树、二叉搜索树的实现和特性</h4><h5 id="参考链接-6"><a href="#参考链接-6" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+</code></pre><pre><code>public int[] twoSum(int[] nums, int target) {
+   HashMap&lt;Integer, Integer&gt; tracker =  new HashMap&lt;Integer, Integer&gt;();
+   int len = nums.length;
+   for (int i = 0; i &lt; len; i++){
+       if (tracker.containsKey(nums[i])){
+           int left = tracker.get(nums[i]);
+           return new int[]{left+1, i+1};
+       } else {
+           tracker.put(target - nums[i], i);
+       }
+   }
+   return new int[2];
+}
+</code></pre><h4 id="第六课-树、二叉树、二叉搜索树"><a href="#第六课-树、二叉树、二叉搜索树" class="headerlink" title="第六课     树、二叉树、二叉搜索树"></a>第六课     树、二叉树、二叉搜索树</h4><h5 id="1-树、二叉树、二叉搜索树的实现和特性"><a href="#1-树、二叉树、二叉搜索树的实现和特性" class="headerlink" title="1.      树、二叉树、二叉搜索树的实现和特性"></a>1.      树、二叉树、二叉搜索树的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="https://visualgo.net/zh/bst" target="_blank" rel="noopener">二叉搜索树 Demo</a></li>
 </ul>
-<h5 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h5><p>树的面试题解法一般都是递归，为什么？<br>说明：同学们可以将自己的思考写在课程下方的留言区一起讨论，也可以写在第 2 周的学习总结中。</p>
-<h4 id="2-实战题目解析：二叉树的中序遍历"><a href="#2-实战题目解析：二叉树的中序遍历" class="headerlink" title="2. 实战题目解析：二叉树的中序遍历"></a>2. 实战题目解析：二叉树的中序遍历</h4><h5 id="参考链接-7"><a href="#参考链接-7" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<p>思考题</p>
+<p>树的面试题解法一般都是递归，为什么？<br>说明：同学们可以将自己的思考写在课程下方的留言区一起讨论，也可以写在第 2 周的学习总结中。</p>
+<h5 id="2-实战题目解析：二叉树的中序遍历"><a href="#2-实战题目解析：二叉树的中序遍历" class="headerlink" title="2.      实战题目解析：二叉树的中序遍历"></a>2.      实战题目解析：二叉树的中序遍历</h5><p>参考链接</p>
+<ul>
 <li><a href="https://visualgo.net/zh/bst" target="_blank" rel="noopener">树的遍历 Demo</a></li>
 </ul>
-<h5 id="实战题目-课后作业-1"><a href="#实战题目-课后作业-1" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h5><ul>
+<p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/binary-tree-inorder-traversal/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/binary-tree-inorder-traversal/</a></li>
 <li><a href="https://leetcode-cn.com/problems/binary-tree-preorder-traversal/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/binary-tree-preorder-traversal/</a></li>
 <li><a href="https://leetcode-cn.com/problems/n-ary-tree-postorder-traversal/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-ary-tree-postorder-traversal/</a></li>
 <li><a href="https://leetcode-cn.com/problems/n-ary-tree-preorder-traversal/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-ary-tree-preorder-traversal/</a></li>
 <li><a href="https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/</a></li>
 </ul>
-<h3 id="第七课-泛型递归、树的递归"><a href="#第七课-泛型递归、树的递归" class="headerlink" title="第七课 泛型递归、树的递归"></a>第七课 泛型递归、树的递归</h3><h4 id="1-递归的实现、特性以及思维要点"><a href="#1-递归的实现、特性以及思维要点" class="headerlink" title="1. 递归的实现、特性以及思维要点"></a>1. 递归的实现、特性以及思维要点</h4><h5 id="参考链接-8"><a href="#参考链接-8" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第七课-泛型递归、树的递归"><a href="#第七课-泛型递归、树的递归" class="headerlink" title="第七课     泛型递归、树的递归"></a>第七课     泛型递归、树的递归</h4><h5 id="1-递归的实现、特性以及思维要点"><a href="#1-递归的实现、特性以及思维要点" class="headerlink" title="1.      递归的实现、特性以及思维要点"></a>1.      递归的实现、特性以及思维要点</h5><p>参考链接</p>
+<ul>
 <li><a href="http://shimo.im/docs/DjqqGCT3xqDYwPyY" target="_blank" rel="noopener">递归代码模板</a></li>
 </ul>
-<h6 id="模板："><a href="#模板：" class="headerlink" title="模板："></a>模板：</h6><pre><code class="lang-java">Python 代码模板
-def recursion(level, param1, param2, ...): 
+<p>模板：</p>
+<p>1）<strong>Python 代码模板</strong></p>
+<pre><code>def recursion(level, param1, param2, ...): 
     # recursion terminator 
     if level &gt; MAX_LEVEL: 
        process_result 
@@ -282,10 +395,8 @@ def recursion(level, param1, param2, ...):
     self.recursion(level + 1, p1, ...) 
 
     # reverse the current level status if needed
-
-
-Java 代码模板
-public void recur(int level, int param) { 
+</code></pre><p>2）<strong>Java 代码模板</strong></p>
+<pre><code>public void recur(int level, int param) { 
 
   // terminator 
   if (level &gt; MAX_LEVEL) { 
@@ -302,8 +413,8 @@ public void recur(int level, int param) {
   // restore current status 
 
 }
-</code></pre>
-<h4 id="2-实战题目解析：爬楼梯、括号生成等问题"><a href="#2-实战题目解析：爬楼梯、括号生成等问题" class="headerlink" title="2. 实战题目解析：爬楼梯、括号生成等问题"></a>2. 实战题目解析：爬楼梯、括号生成等问题</h4><h5 id="实战题目-1"><a href="#实战题目-1" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+</code></pre><h5 id="2-实战题目解析：爬楼梯、括号生成等问题"><a href="#2-实战题目解析：爬楼梯、括号生成等问题" class="headerlink" title="2.      实战题目解析：爬楼梯、括号生成等问题"></a>2.      实战题目解析：爬楼梯、括号生成等问题</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/climbing-stairs/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/climbing-stairs/</a></li>
 <li><a href="https://leetcode-cn.com/problems/generate-parentheses/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/generate-parentheses/</a></li>
 <li><a href="https://leetcode-cn.com/problems/invert-binary-tree/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/invert-binary-tree/description/</a></li>
@@ -312,21 +423,26 @@ public void recur(int level, int param) {
 <li><a href="https://leetcode-cn.com/problems/minimum-depth-of-binary-tree" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minimum-depth-of-binary-tree</a></li>
 <li><a href="https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/</a></li>
 </ul>
-<h5 id="每日一课"><a href="#每日一课" class="headerlink" title="每日一课"></a>每日一课</h5><ul>
+<p>每日一课</p>
+<ul>
 <li><a href="https://time.geekbang.org/dailylesson/detail/100028406" target="_blank" rel="noopener">如何优雅地计算斐波那契数列</a></li>
 </ul>
-<h5 id="课后作业-3"><a href="#课后作业-3" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/</a></li>
 <li><a href="https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal" target="_blank" rel="noopener">https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal</a></li>
 <li><a href="https://leetcode-cn.com/problems/combinations/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/combinations/</a></li>
 <li><a href="https://leetcode-cn.com/problems/permutations/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/permutations/</a></li>
 <li><a href="https://leetcode-cn.com/problems/permutations-ii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/permutations-ii/</a></li>
 </ul>
-<h3 id="第八课-分治、回溯"><a href="#第八课-分治、回溯" class="headerlink" title="第八课 分治、回溯"></a>第八课 分治、回溯</h3><h4 id="1-分治、回溯的实现和特性"><a href="#1-分治、回溯的实现和特性" class="headerlink" title="1. 分治、回溯的实现和特性"></a>1. 分治、回溯的实现和特性</h4><h5 id="参考链接-9"><a href="#参考链接-9" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第八课-分治、回溯"><a href="#第八课-分治、回溯" class="headerlink" title="第八课     分治、回溯"></a>第八课     分治、回溯</h4><h5 id="1-分治、回溯的实现和特性"><a href="#1-分治、回溯的实现和特性" class="headerlink" title="1.      分治、回溯的实现和特性"></a>1.      分治、回溯的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="https://shimo.im/docs/3xvghYh3JJPKwdvt" target="_blank" rel="noopener">分治代码模板</a></li>
 <li><a href="https://leetcode-cn.com/problems/generate-parentheses/" target="_blank" rel="noopener">括号生成问题</a></li>
 </ul>
-<h6 id="模板：-1"><a href="#模板：-1" class="headerlink" title="模板："></a>模板：</h6><pre><code class="lang-java">def divide_conquer(problem, param1, param2, ...): 
+<p>模板：</p>
+<p>1）python</p>
+<pre><code class="lang-java">def divide_conquer(problem, param1, param2, ...): 
   # recursion terminator 
   if problem is None: 
     print_result 
@@ -347,25 +463,30 @@ public void recur(int level, int param) {
 
   # revert the current level states
 </code></pre>
-<h4 id="2-实战题目解析：Pow-x-n-、子集"><a href="#2-实战题目解析：Pow-x-n-、子集" class="headerlink" title="2. 实战题目解析：Pow(x,n)、子集"></a>2. 实战题目解析：Pow(x,n)、子集</h4><h5 id="预习题目-1"><a href="#预习题目-1" class="headerlink" title="预习题目"></a>预习题目</h5><ul>
+<h5 id="2-实战题目解析：Pow-x-n-、子集"><a href="#2-实战题目解析：Pow-x-n-、子集" class="headerlink" title="2.      实战题目解析：Pow(x,n)、子集"></a>2.      实战题目解析：Pow(x,n)、子集</h5><p>预习题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/powx-n/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/powx-n/</a></li>
 <li><a href="https://leetcode-cn.com/problems/subsets/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/subsets/</a></li>
 </ul>
-<h5 id="参考链接-10"><a href="#参考链接-10" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<p>参考链接</p>
+<ul>
 <li><a href="http://www.matrix67.com/blog/archives/361" target="_blank" rel="noopener">牛顿迭代法原理</a></li>
 <li><a href="http://www.voidcn.com/article/p-eudisdmk-zm.html" target="_blank" rel="noopener">牛顿迭代法代码</a></li>
 </ul>
-<h4 id="3-实战题目解析：电话号码的字母组合、N皇后"><a href="#3-实战题目解析：电话号码的字母组合、N皇后" class="headerlink" title="3. 实战题目解析：电话号码的字母组合、N皇后"></a>3. 实战题目解析：电话号码的字母组合、N皇后</h4><h5 id="实战题目-2"><a href="#实战题目-2" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+<h5 id="3-实战题目解析：电话号码的字母组合、N皇后"><a href="#3-实战题目解析：电话号码的字母组合、N皇后" class="headerlink" title="3.      实战题目解析：电话号码的字母组合、N皇后"></a>3.      实战题目解析：电话号码的字母组合、N皇后</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/majority-element/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/majority-element/description/ </a>（简单、但是高频）</li>
 <li><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/</a></li>
 <li><a href="https://leetcode-cn.com/problems/n-queens/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-queens/</a></li>
 </ul>
-<h2 id="第三周"><a href="#第三周" class="headerlink" title="第三周"></a>第三周</h2><h3 id="第九课-深度优先搜索和广度优先搜索"><a href="#第九课-深度优先搜索和广度优先搜索" class="headerlink" title="第九课 深度优先搜索和广度优先搜索"></a>第九课 深度优先搜索和广度优先搜索</h3><h4 id="1-深度优先搜索、广度优先搜索的实现和特性"><a href="#1-深度优先搜索、广度优先搜索的实现和特性" class="headerlink" title="1. 深度优先搜索、广度优先搜索的实现和特性"></a>1. 深度优先搜索、广度优先搜索的实现和特性</h4><h5 id="参考链接-11"><a href="#参考链接-11" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第三周"><a href="#第三周" class="headerlink" title="第三周"></a>第三周</h4><h4 id="第九课-深度优先搜索和广度优先搜索"><a href="#第九课-深度优先搜索和广度优先搜索" class="headerlink" title="第九课     深度优先搜索和广度优先搜索"></a>第九课     深度优先搜索和广度优先搜索</h4><h5 id="1-深度优先搜索、广度优先搜索的实现和特性"><a href="#1-深度优先搜索、广度优先搜索的实现和特性" class="headerlink" title="1.      深度优先搜索、广度优先搜索的实现和特性"></a>1.      深度优先搜索、广度优先搜索的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="http://shimo.im/docs/ddgwCccJQKxkrcTq" target="_blank" rel="noopener">DFS 代码模板（递归写法、非递归写法）</a></li>
 <li><a href="http://shimo.im/docs/P8TqKHGKt3ytkYYd" target="_blank" rel="noopener">BFS 代码模板</a></li>
 </ul>
-<h6 id="DFS模板"><a href="#DFS模板" class="headerlink" title="DFS模板"></a>DFS模板</h6><pre><code class="lang-java">递归写法
-visited = set() 
+<p>1）DFS模板</p>
+<p><strong>递归写法</strong></p>
+<pre><code>visited = set() 
 
 def dfs(node, visited):
     if node in visited: # terminator
@@ -379,10 +500,8 @@ def dfs(node, visited):
     for next_node in node.children(): 
         if next_node not in visited: 
             dfs(next_node, visited)
-
-
-非递归写法
-def DFS(self, tree): 
+</code></pre><p><strong>非递归写法</strong></p>
+<pre><code>def DFS(self, tree): 
 
     if tree.root is None: 
         return [] 
@@ -399,8 +518,8 @@ def DFS(self, tree):
 
     # other processing work 
     ...
-</code></pre>
-<h6 id="BFS模板"><a href="#BFS模板" class="headerlink" title="BFS模板"></a>BFS模板</h6><pre><code class="lang-java">def BFS(graph, start, end):
+</code></pre><p>2）BFS模板</p>
+<pre><code class="lang-java">def BFS(graph, start, end):
     visited = set()
     queue = [] 
     queue.append([start]) 
@@ -416,44 +535,52 @@ def DFS(self, tree):
     # other processing work 
     ...
 </code></pre>
-<h4 id="2-实战题目解析：二叉树的层次遍历等问题"><a href="#2-实战题目解析：二叉树的层次遍历等问题" class="headerlink" title="2. 实战题目解析：二叉树的层次遍历等问题"></a>2. 实战题目解析：二叉树的层次遍历等问题</h4><h5 id="实战题目-3"><a href="#实战题目-3" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+<h5 id="2-实战题目解析：二叉树的层次遍历等问题"><a href="#2-实战题目解析：二叉树的层次遍历等问题" class="headerlink" title="2.      实战题目解析：二叉树的层次遍历等问题"></a>2.      实战题目解析：二叉树的层次遍历等问题</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/#/description</a></li>
 <li><a href="https://leetcode-cn.com/problems/minimum-genetic-mutation/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minimum-genetic-mutation/#/description</a></li>
 <li><a href="https://leetcode-cn.com/problems/generate-parentheses/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/generate-parentheses/#/description</a></li>
 <li><a href="https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row/#/description</a></li>
 </ul>
-<h5 id="课后作业-4"><a href="#课后作业-4" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/word-ladder/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/word-ladder/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/word-ladder-ii/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/word-ladder-ii/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/number-of-islands/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/number-of-islands/</a></li>
 <li><a href="https://leetcode-cn.com/problems/minesweeper/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minesweeper/description/</a></li>
 </ul>
-<h3 id="第十课-贪心算法"><a href="#第十课-贪心算法" class="headerlink" title="第十课  贪心算法"></a>第十课  贪心算法</h3><h4 id="贪心的实现、特性及实战题目解析"><a href="#贪心的实现、特性及实战题目解析" class="headerlink" title="贪心的实现、特性及实战题目解析"></a>贪心的实现、特性及实战题目解析</h4><h5 id="参考链接-12"><a href="#参考链接-12" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第十课-贪心算法"><a href="#第十课-贪心算法" class="headerlink" title="第十课     贪心算法"></a>第十课     贪心算法</h4><h5 id="贪心的实现、特性及实战题目解析"><a href="#贪心的实现、特性及实战题目解析" class="headerlink" title="贪心的实现、特性及实战题目解析"></a>贪心的实现、特性及实战题目解析</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/coin-change/" target="_blank" rel="noopener">coin change 题目</a></li>
 <li><a href="https://zh.wikipedia.org/wiki/动态规划" target="_blank" rel="noopener">动态规划定义</a></li>
 </ul>
-<h5 id="课后作业-5"><a href="#课后作业-5" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/lemonade-change/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/lemonade-change/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/assign-cookies/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/assign-cookies/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/walking-robot-simulation/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/walking-robot-simulation/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/jump-game/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/jump-game/ </a>、<a href="https://leetcode-cn.com/problems/jump-game-ii/" target="_blank" rel="noopener"> https://leetcode-cn.com/problems/jump-game-ii/</a></li>
 </ul>
-<h3 id="第十一课-二分查找"><a href="#第十一课-二分查找" class="headerlink" title="第十一课  二分查找"></a>第十一课  二分查找</h3><h4 id="二分查找的实现、特性及实战题目解析"><a href="#二分查找的实现、特性及实战题目解析" class="headerlink" title="二分查找的实现、特性及实战题目解析"></a>二分查找的实现、特性及实战题目解析</h4><h5 id="参考链接-13"><a href="#参考链接-13" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第十一课-二分查找"><a href="#第十一课-二分查找" class="headerlink" title="第十一课     二分查找"></a>第十一课     二分查找</h4><h5 id="二分查找的实现、特性及实战题目解析"><a href="#二分查找的实现、特性及实战题目解析" class="headerlink" title="二分查找的实现、特性及实战题目解析"></a>二分查找的实现、特性及实战题目解析</h5><p>参考链接</p>
+<ul>
 <li><a href="https://shimo.im/docs/hjQqRQkGgwd9g36J" target="_blank" rel="noopener">二分查找代码模板</a></li>
 <li><a href="https://www.beyond3d.com/content/articles/8/" target="_blank" rel="noopener">Fast InvSqrt() 扩展阅读</a></li>
 </ul>
-<h5 id="实战题目-4"><a href="#实战题目-4" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+<p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/sqrtx/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/sqrtx/</a></li>
 <li><a href="https://leetcode-cn.com/problems/valid-perfect-square/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-perfect-square/</a></li>
 </ul>
-<h5 id="课后作业-6"><a href="#课后作业-6" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/search-in-rotated-sorted-array/</a></li>
 <li><a href="https://leetcode-cn.com/problems/search-a-2d-matrix/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/search-a-2d-matrix/</a></li>
 <li><a href="https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/</a></li>
 <li>使用二分查找，寻找一个半有序数组 [4, 5, 6, 7, 0, 1, 2] 中间无序的地方<br>说明：同学们可以将自己的思路、代码写在第 3 周的学习总结中</li>
 </ul>
-<h6 id="二分查找模板"><a href="#二分查找模板" class="headerlink" title="二分查找模板"></a>二分查找模板</h6><pre><code class="lang-java">left, right = 0, len(array) - 1 
+<p>二分查找模板</p>
+<pre><code class="lang-java">left, right = 0, len(array) - 1 
 while left &lt;= right: 
       mid = (left + right) / 2 
       if array[mid] == target: 
@@ -464,12 +591,15 @@ while left &lt;= right:
       else: 
             right = mid - 1
 </code></pre>
-<h2 id="第四周-期中复习、考试"><a href="#第四周-期中复习、考试" class="headerlink" title="第四周  期中复习、考试"></a>第四周  期中复习、考试</h2><h2 id="第五周"><a href="#第五周" class="headerlink" title="第五周"></a>第五周</h2><h3 id="第十二课-动态规划"><a href="#第十二课-动态规划" class="headerlink" title="第十二课  动态规划"></a>第十二课  动态规划</h3><h4 id="1-动态规划的实现及关键点"><a href="#1-动态规划的实现及关键点" class="headerlink" title="1. 动态规划的实现及关键点"></a>1. 动态规划的实现及关键点</h4><h5 id="参考链接-14"><a href="#参考链接-14" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="第四周-期中复习、考试"><a href="#第四周-期中复习、考试" class="headerlink" title="第四周     期中复习、考试"></a>第四周     期中复习、考试</h4><h4 id="第五周"><a href="#第五周" class="headerlink" title="第五周"></a>第五周</h4><h4 id="第十二课-动态规划"><a href="#第十二课-动态规划" class="headerlink" title="第十二课     动态规划"></a>第十二课     动态规划</h4><h5 id="1-动态规划的实现及关键点"><a href="#1-动态规划的实现及关键点" class="headerlink" title="1.      动态规划的实现及关键点"></a>1.      动态规划的实现及关键点</h5><p>参考链接</p>
+<ul>
 <li><a href="http://shimo.im/docs/DjqqGCT3xqDYwPyY/" target="_blank" rel="noopener">递归代码模板</a></li>
 <li><a href="http://shimo.im/docs/3xvghYh3JJPKwdvt/" target="_blank" rel="noopener">分治代码模板</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Dynamic_programming" target="_blank" rel="noopener">动态规划定义</a></li>
 </ul>
-<h6 id="递归模板"><a href="#递归模板" class="headerlink" title="递归模板"></a>递归模板</h6><pre><code class="lang-javaJ">Python 代码模板
+<p>递归模板：</p>
+<p>1）Python 代码模板</p>
+<pre><code class="lang-javaJ">
 def recursion(level, param1, param2, ...): 
     # recursion terminator 
     if level &gt; MAX_LEVEL: 
@@ -483,10 +613,9 @@ def recursion(level, param1, param2, ...):
     self.recursion(level + 1, p1, ...) 
 
     # reverse the current level status if needed
-
-
-Java 代码模板
-public void recur(int level, int param) { 
+</code></pre>
+<p>2）Java 代码模板</p>
+<pre><code>public void recur(int level, int param) { 
 
   // terminator 
   if (level &gt; MAX_LEVEL) { 
@@ -503,8 +632,8 @@ public void recur(int level, int param) {
   // restore current status 
 
 }
-</code></pre>
-<h6 id="分治代码模板"><a href="#分治代码模板" class="headerlink" title="分治代码模板"></a>分治代码模板</h6><pre><code class="lang-javaJ">def divide_conquer(problem, param1, param2, ...): 
+</code></pre><p>分治代码模板：</p>
+<pre><code class="lang-javaJ">def divide_conquer(problem, param1, param2, ...): 
   # recursion terminator 
   if problem is None: 
     print_result 
@@ -525,13 +654,15 @@ public void recur(int level, int param) {
 
   # revert the current level states
 </code></pre>
-<h4 id="2-DP例题解析：Fibonacci数列、路径计数"><a href="#2-DP例题解析：Fibonacci数列、路径计数" class="headerlink" title="2. DP例题解析：Fibonacci数列、路径计数"></a>2. DP例题解析：Fibonacci数列、路径计数</h4><h4 id="3-DP例题解析：最长公共子序列"><a href="#3-DP例题解析：最长公共子序列" class="headerlink" title="3. DP例题解析：最长公共子序列"></a>3. DP例题解析：最长公共子序列</h4><h5 id="参考链接-15"><a href="#参考链接-15" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h5 id="2-DP例题解析：Fibonacci数列、路径计数"><a href="#2-DP例题解析：Fibonacci数列、路径计数" class="headerlink" title="2.      DP例题解析：Fibonacci数列、路径计数"></a>2.      DP例题解析：Fibonacci数列、路径计数</h5><h5 id="3-DP例题解析：最长公共子序列"><a href="#3-DP例题解析：最长公共子序列" class="headerlink" title="3.      DP例题解析：最长公共子序列"></a>3.      DP例题解析：最长公共子序列</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/unique-paths/" target="_blank" rel="noopener">不同路径题目</a></li>
 <li><a href="https://leetcode-cn.com/problems/unique-paths-ii/" target="_blank" rel="noopener">不同路径 2 题目</a></li>
 <li><a href="https://leetcode-cn.com/problems/longest-common-subsequence/" target="_blank" rel="noopener">最长公共子序列题目</a></li>
 <li><a href="https://www.bilibili.com/video/av53233912?from=search&amp;seid=2847395688604491997" target="_blank" rel="noopener">MIT 动态规划课程最短路径算法</a></li>
 </ul>
-<h4 id="4-实战题目解析：三角形最小路径和"><a href="#4-实战题目解析：三角形最小路径和" class="headerlink" title="4. 实战题目解析：三角形最小路径和"></a>4. 实战题目解析：三角形最小路径和</h4><h5 id="实战题目-5"><a href="#实战题目-5" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+<h5 id="4-实战题目解析：三角形最小路径和"><a href="#4-实战题目解析：三角形最小路径和" class="headerlink" title="4.      实战题目解析：三角形最小路径和"></a>4.      实战题目解析：三角形最小路径和</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/climbing-stairs/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/climbing-stairs/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/triangle/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/triangle/description/</a></li>
 <li><a href="https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up" target="_blank" rel="noopener">https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up</a>)</li>
@@ -539,107 +670,87 @@ public void recur(int level, int param) {
 <li><a href="https://leetcode-cn.com/problems/maximum-product-subarray/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/maximum-product-subarray/description/</a></li>
 <li><a href="https://leetcode.com/problems/coin-change/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/coin-change/description/</a></li>
 </ul>
-<h4 id="5-实战题目解析：最大子序列和"><a href="#5-实战题目解析：最大子序列和" class="headerlink" title="5. 实战题目解析：最大子序列和"></a>5. 实战题目解析：最大子序列和</h4><h5 id="实战题目-6"><a href="#实战题目-6" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
-<li><a href="https://leetcode-cn.com/problems/climbing-stairs/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/climbing-stairs/description/</a></li>
-<li><a href="https://leetcode-cn.com/problems/triangle/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/triangle/description/</a></li>
-<li><a href="https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up" target="_blank" rel="noopener">https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up</a>)</li>
-<li><a href="https://leetcode-cn.com/problems/maximum-subarray/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/maximum-subarray/</a></li>
-<li><a href="https://leetcode-cn.com/problems/maximum-product-subarray/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/maximum-product-subarray/description/</a></li>
-<li><a href="https://leetcode.com/problems/coin-change/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/coin-change/description/</a></li>
+<p>爬楼梯题解</p>
+<ul>
+<li><strong>【题目】</strong></li>
 </ul>
-<h4 id="6-实战题目解析：打家劫舍"><a href="#6-实战题目解析：打家劫舍" class="headerlink" title="6. 实战题目解析：打家劫舍"></a>6. 实战题目解析：打家劫舍</h4><h6 id="爬楼梯题解"><a href="#爬楼梯题解" class="headerlink" title="爬楼梯题解"></a>爬楼梯题解</h6><pre><code class="lang-javaJ">【题目】
-　　假设你正在爬楼梯，每次你可以爬 1 个、2 个或 3 个台阶，那么在相邻步数不能相同的条件下，你有多少种不同的方法可以爬到第 n 阶呢？
-
-
-
-【解题思路】
-　　我们都知道，在不考虑相邻步数不相同的条件下，若要到达第 n 个台阶，方法数 F(n) 有：
-
-n = 1时：F(1) = 1
-n = 2时：F(2) = 2
-n = 3时：F(3) = 4
-n &gt; 3时：F(n) = F(n-1) + F(n-2) + F(n-3)
-　　而现在加上相邻步数不能相同这个限制条件后，我们该如何考虑呢？
-
-　　首先，我们来思考一下如何才能使相邻步数不相同？由于我们每一次可以爬1个、2个或3个台阶，所以为了使相邻步数不相同，可分如下三种情况来进行讨论：
-
-（1）若当前这一步爬了 1 个台阶，那么上一步只能爬 2 个或 3 个台阶；
-（2）若当前这一步爬了 2 个台阶，那么上一步只能爬 1 个或 3 个台阶；
-（3）若当前这一步爬了 3 个台阶，那么上一步只能爬 1 个或 2 个台阶。
-　　接下来，我们再来分析如何统计在相邻步数不相同的情况下到达第 n 个台阶的方法数？由于我们每一次可以爬1个、2个或3个台阶，所以要想到达第 n 个台阶，我们只能从第n-1个、第n-2个或第n-3个台阶过来，具体情况如下：
-
-（1）若是从第 n-1 个台阶爬了 1 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 2 个台阶到达第 n-1 个台阶的方法数 + 上一步爬 3 个台阶到达第 n-1 个台阶的方法数；
-（2）若是从第 n-2 个台阶爬了 2 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 1 个台阶到达第 n-2 个台阶的方法数 + 上一步爬 3 个台阶到达第 n-2 个台阶的方法数；
-（3）若是从第 n-3 个台阶爬了 3 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 1 个台阶到达第 n-3 个台阶的方法数 + 上一步爬 2 个台阶到达第 n-3 个台阶的方法数；
-　　综上所述，那么到达第 n 个台阶总的方法数就是上述三种不同情况下的方法数之和。
-
-
-
-　　通过上述分析，我们可以建立一个二维数组 dp[i][j] ，其中横坐标 i 表示当前这一步爬 i 个台阶（对该题而言，i 的取值只有1、2和3），纵坐标 j 表示第 j 个台阶，而每一个 dp[i][j] 表示的是从上一个位置爬 i 个台阶到达第 j 个台阶时所有满足条件的方法数。
-
-　　首先，我们对这个二维数组进行初始化，如下：
-
-
-
-0
-
-1
-
-2
-
-3
-
-0
-
-0
-
-0
-
-0
-
-0
-
-1
-
-0
-
-1
-
-0
-
-1
-
-2
-
-0
-
-0
-
-1
-
-1
-
-3
-
-0
-
-0
-
-0
-
-1
-
-　　接着，我们可以通过上面的分析列出如下的递推公式：
-
-dp[1][j] = dp[2][j-1]+dp[3][j-1];
+<p>　　假设你正在爬楼梯，每次你可以<strong>爬 1 个、2 个或 3 个</strong>台阶，那么在<strong>相邻步数不能相同</strong>的条件下，你有多少种不同的方法可以爬到第 n 阶呢？</p>
+<ul>
+<li><strong>【解题思路】</strong></li>
+</ul>
+<p>　　我们都知道，在不考虑相邻步数不相同的条件下，若要到达第 n 个台阶，方法数 F(n) 有：</p>
+<blockquote>
+<p>n = 1时：F(1) = 1</p>
+<p>n = 2时：F(2) = 2</p>
+<p>n = 3时：F(3) = 4</p>
+<p>n &gt; 3时：F(n) = F(n-1) + F(n-2) + F(n-3)</p>
+</blockquote>
+<p>　　而现在加上相邻步数不能相同这个限制条件后，我们该如何考虑呢？</p>
+<p>　　首先，我们来思考一下如何才能使相邻步数不相同？由于我们每一次可以爬1个、2个或3个台阶，所以为了使相邻步数不相同，可分如下三种情况来进行讨论：</p>
+<blockquote>
+<p>（1）若当前这一步爬了 1 个台阶，那么上一步只能爬 2 个或 3 个台阶；</p>
+<p>（2）若当前这一步爬了 2 个台阶，那么上一步只能爬 1 个或 3 个台阶；</p>
+<p>（3）若当前这一步爬了 3 个台阶，那么上一步只能爬 1 个或 2 个台阶。</p>
+</blockquote>
+<p>　　接下来，我们再来分析如何统计在相邻步数不相同的情况下到达第 n 个台阶的方法数？由于我们每一次可以爬1个、2个或3个台阶，所以要想到达第 n 个台阶，我们只能从第n-1个、第n-2个或第n-3个台阶过来，具体情况如下：</p>
+<blockquote>
+<p>（1）若是从第 n-1 个台阶爬了 1 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 2 个台阶到达第 n-1 个台阶的方法数 + 上一步爬 3 个台阶到达第 n-1 个台阶的方法数；</p>
+<p>（2）若是从第 n-2 个台阶爬了 2 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 1 个台阶到达第 n-2 个台阶的方法数 + 上一步爬 3 个台阶到达第 n-2 个台阶的方法数；</p>
+<p>（3）若是从第 n-3 个台阶爬了 3 个台阶到达了第 n 个台阶，那么此时到达第n个台阶的方法数 = 上一步爬 1 个台阶到达第 n-3 个台阶的方法数 + 上一步爬 2 个台阶到达第 n-3 个台阶的方法数；</p>
+</blockquote>
+<p>　　综上所述，那么到达第 n 个台阶总的方法数就是上述三种不同情况下的方法数之和。</p>
+<p>　　通过上述分析，我们可以建立一个二维数组 dp[i][j] ，其中横坐标 <strong>i</strong> 表示当前这一步爬 i 个台阶（对该题而言，i 的取值只有1、2和3），纵坐标 <strong>j</strong> 表示第 j 个台阶，而每一个 <strong>dp[i][j]</strong> 表示的是从上一个位置爬 i 个台阶到达第 j 个台阶时所有满足条件的方法数。</p>
+<p>　　首先，我们对这个二维数组进行初始化，如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>接着，我们可以通过上面的分析列出如下的递推公式：</p>
+<pre><code>dp[1][j] = dp[2][j-1]+dp[3][j-1];
 dp[2][j] = dp[1][j-2]+dp[3][j-2];
 dp[3][j] = dp[1][j-3]+dp[2][j-3];
-　　最后，当递推结束后，dp[1][n] + dp[2][n] + dp[3][n] 就是最终的结果。
-
-
-
-【代码】
-int climbStairs(int n) {
+</code></pre><p>　最后，当递推结束后，<strong>dp[1][n] + dp[2][n] + dp[3][n]</strong> 就是最终的结果。</p>
+<p><strong>【代码】</strong></p>
+<pre><code>int climbStairs(int n) {
     if(n==1 || n==2)
         return 1;
     if(n==3)
@@ -664,8 +775,17 @@ int climbStairs(int n) {
     //返回结果
     return dp[1][n] + dp[2][n] + dp[3][n];
 }
-</code></pre>
-<h5 id="实战题目-7"><a href="#实战题目-7" class="headerlink" title="实战题目"></a>实战题目</h5><ul>
+</code></pre><h5 id="5-实战题目解析：最大子序列和"><a href="#5-实战题目解析：最大子序列和" class="headerlink" title="5.      实战题目解析：最大子序列和"></a>5.      实战题目解析：最大子序列和</h5><p>实战题目</p>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/climbing-stairs/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/climbing-stairs/description/</a></li>
+<li><a href="https://leetcode-cn.com/problems/triangle/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/triangle/description/</a></li>
+<li><a href="https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up" target="_blank" rel="noopener">https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up</a>)</li>
+<li><a href="https://leetcode-cn.com/problems/maximum-subarray/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/maximum-subarray/</a></li>
+<li><a href="https://leetcode-cn.com/problems/maximum-product-subarray/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/maximum-product-subarray/description/</a></li>
+<li><a href="https://leetcode.com/problems/coin-change/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/coin-change/description/</a></li>
+</ul>
+<h5 id="6-实战题目解析：打家劫舍"><a href="#6-实战题目解析：打家劫舍" class="headerlink" title="6.      实战题目解析：打家劫舍"></a>6.      实战题目解析：打家劫舍</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/house-robber/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/house-robber/</a></li>
 <li><a href="https://leetcode-cn.com/problems/house-robber-ii/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/house-robber-ii/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/#/description</a></li>
@@ -676,7 +796,8 @@ int climbStairs(int n) {
 <li><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/</a></li>
 <li><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/solution/yi-ge-fang-fa-tuan-mie-6-dao-gu-piao-wen-ti-by-l-3/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/solution/yi-ge-fang-fa-tuan-mie-6-dao-gu-piao-wen-ti-by-l-3/</a></li>
 </ul>
-<h5 id="高级-DP-实战题目"><a href="#高级-DP-实战题目" class="headerlink" title="高级 DP 实战题目"></a>高级 DP 实战题目</h5><ul>
+<p>高级 DP 实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/perfect-squares/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/perfect-squares/</a></li>
 <li><a href="https://leetcode-cn.com/problems/edit-distance/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/edit-distance/ </a>（重点）</li>
 <li><a href="https://leetcode-cn.com/problems/jump-game/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/jump-game/</a></li>
@@ -687,8 +808,9 @@ int climbStairs(int n) {
 <li><a href="https://leetcode-cn.com/problems/coin-change/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/coin-change/</a></li>
 <li><a href="https://leetcode-cn.com/problems/coin-change-2/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/coin-change-2/</a></li>
 </ul>
-<p><strong>注意：请大家先消化前面的实战题目，高级 DP 的方法和题解会在课程后面解锁。</strong></p>
-<h5 id="课后作业-7"><a href="#课后作业-7" class="headerlink" title="课后作业"></a>课后作业</h5><ul>
+<p>注意：请大家先消化前面的实战题目，高级 DP 的方法和题解会在课程后面解锁。**</p>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-valid-parentheses/</a></li>
 <li><a href="https://leetcode-cn.com/problems/minimum-path-sum/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minimum-path-sum/</a></li>
 <li><a href="https://leetcode-cn.com/problems/edit-distance/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/edit-distance/</a></li>
@@ -703,12 +825,14 @@ int climbStairs(int n) {
 <li><a href="https://leetcode-cn.com/problems/minimum-window-substring/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minimum-window-substring/</a></li>
 <li><a href="https://leetcode-cn.com/problems/burst-balloons/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/burst-balloons/</a></li>
 </ul>
-<h3 id="第六周"><a href="#第六周" class="headerlink" title="第六周"></a>第六周</h3><h4 id="第十三课-字典树和并查集"><a href="#第十三课-字典树和并查集" class="headerlink" title="第十三课  字典树和并查集"></a>第十三课  字典树和并查集</h4><h5 id="1-Trie树的基本实现和特性"><a href="#1-Trie树的基本实现和特性" class="headerlink" title="1. Trie树的基本实现和特性"></a>1. Trie树的基本实现和特性</h5><h6 id="参考链接-16"><a href="#参考链接-16" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第六周"><a href="#第六周" class="headerlink" title="第六周"></a>第六周</h4><h4 id="第十三课-字典树和并查集"><a href="#第十三课-字典树和并查集" class="headerlink" title="第十三课     字典树和并查集"></a>第十三课     字典树和并查集</h4><h5 id="1-Trie树的基本实现和特性"><a href="#1-Trie树的基本实现和特性" class="headerlink" title="1.        Trie树的基本实现和特性"></a>1.        Trie树的基本实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener">二叉树的层次遍历</a></li>
 <li><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/" target="_blank" rel="noopener">实现 Trie</a></li>
 <li><a href="https://shimo.im/docs/Pk6vPY3HJ9hKkh33" target="_blank" rel="noopener">Tire 树代码模板</a></li>
 </ul>
-<h6 id="Trie树模板"><a href="#Trie树模板" class="headerlink" title="Trie树模板"></a>Trie树模板</h6><pre><code class="lang-javaJ">Python版
+<p>Trie树模板</p>
+<pre><code class="lang-javaJ">Python版
 class Trie(object):
 
     def __init__(self): 
@@ -737,21 +861,26 @@ class Trie(object):
             node = node[char] 
         return True
 </code></pre>
-<h5 id="2-Trie树实战题目解析：单词搜索2"><a href="#2-Trie树实战题目解析：单词搜索2" class="headerlink" title="2. Trie树实战题目解析：单词搜索2"></a>2. Trie树实战题目解析：单词搜索2</h5><h6 id="实战题目-课后作业-2"><a href="#实战题目-课后作业-2" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h6><ul>
+<h5 id="2-Trie树实战题目解析：单词搜索2"><a href="#2-Trie树实战题目解析：单词搜索2" class="headerlink" title="2.      Trie树实战题目解析：单词搜索2"></a>2.      Trie树实战题目解析：单词搜索2</h5><p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/implement-trie-prefix-tree/#/description</a></li>
 <li><a href="https://leetcode-cn.com/problems/word-search-ii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/word-search-ii/</a></li>
 <li>分析单词搜索 2 用 Tire 树方式实现的时间复杂度，请同学们提交在第 6 周的学习总结中。</li>
 </ul>
-<h5 id="3-并查集的基本实现、特性和实战题目解析"><a href="#3-并查集的基本实现、特性和实战题目解析" class="headerlink" title="3. 并查集的基本实现、特性和实战题目解析"></a>3. 并查集的基本实现、特性和实战题目解析</h5><h6 id="参考链接-17"><a href="#参考链接-17" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h5 id="3-并查集的基本实现、特性和实战题目解析"><a href="#3-并查集的基本实现、特性和实战题目解析" class="headerlink" title="3.      并查集的基本实现、特性和实战题目解析"></a>3.      并查集的基本实现、特性和实战题目解析</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/number-of-islands/" target="_blank" rel="noopener">岛屿数量</a></li>
 <li><a href="https://shimo.im/docs/ydPCH33xDhK9YwWR" target="_blank" rel="noopener">并查集代码模板</a></li>
 </ul>
-<h6 id="实战题目-课后作业-3"><a href="#实战题目-课后作业-3" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h6><ul>
+<p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/friend-circles" target="_blank" rel="noopener">https://leetcode-cn.com/problems/friend-circles</a></li>
 <li><a href="https://leetcode-cn.com/problems/number-of-islands/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/number-of-islands/</a></li>
 <li><a href="https://leetcode-cn.com/problems/surrounded-regions/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/surrounded-regions/</a></li>
 </ul>
-<h6 id="并查集模板"><a href="#并查集模板" class="headerlink" title="并查集模板"></a>并查集模板</h6><pre><code class="lang-java">Java 模板
+<p>并查集模板：</p>
+<p>1）Java 模板</p>
+<pre><code class="lang-java">
 class UnionFind { 
     private int count = 0; 
     private int[] parent; 
@@ -777,10 +906,9 @@ class UnionFind {
         count--;
     }
 }
-
-
-Python 模板
-def init(p): 
+</code></pre>
+<p>2）Python 模板</p>
+<pre><code>def init(p): 
     # for i = 0 .. n: p[i] = i; 
     p = [i for i in range(n)] 
 
@@ -796,14 +924,15 @@ def parent(self, p, i):
     while p[i] != i: # 路径压缩 ?
         x = i; i = p[i]; p[x] = root 
     return root
-</code></pre>
-<h4 id="第十四课-高级搜索"><a href="#第十四课-高级搜索" class="headerlink" title="第十四课   高级搜索"></a>第十四课   高级搜索</h4><h5 id="1-剪枝的实现和特性"><a href="#1-剪枝的实现和特性" class="headerlink" title="1. 剪枝的实现和特性"></a>1. 剪枝的实现和特性</h5><h6 id="参考链接-18"><a href="#参考链接-18" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+</code></pre><h4 id="第十四课-高级搜索"><a href="#第十四课-高级搜索" class="headerlink" title="第十四课     高级搜索"></a>第十四课     高级搜索</h4><h5 id="1-剪枝的实现和特性"><a href="#1-剪枝的实现和特性" class="headerlink" title="1.      剪枝的实现和特性"></a>1.      剪枝的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="http://shimo.im/docs/ddgwCccJQKxkrcTq/" target="_blank" rel="noopener">DFS 代码模板</a></li>
 <li><a href="http://shimo.im/docs/P8TqKHGKt3ytkYYd/" target="_blank" rel="noopener">BFS 代码模板</a></li>
 <li><a href="https://nikcheerla.github.io/deeplearningschool/2018/01/01/AlphaZero-Explained/" target="_blank" rel="noopener">AlphaZero Explained</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Game_complexity" target="_blank" rel="noopener">棋类复杂度</a></li>
 </ul>
-<h6 id="DFS模板-1"><a href="#DFS模板-1" class="headerlink" title="DFS模板"></a>DFS模板</h6><pre><code class="lang-java">递归写法
+<p>DFS模板</p>
+<pre><code class="lang-java">递归写法
 visited = set() 
 
 def dfs(node, visited):
@@ -839,7 +968,8 @@ def DFS(self, tree):
     # other processing work 
     ...
 </code></pre>
-<h6 id="BFS模板-1"><a href="#BFS模板-1" class="headerlink" title="BFS模板"></a>BFS模板</h6><pre><code class="lang-java">def BFS(graph, start, end):
+<p>BFS模板</p>
+<pre><code class="lang-java">def BFS(graph, start, end):
     visited = set()
     queue = [] 
     queue.append([start]) 
@@ -855,32 +985,38 @@ def DFS(self, tree):
     # other processing work 
     ...
 </code></pre>
-<h5 id="2-剪枝实战题目解析：数独"><a href="#2-剪枝实战题目解析：数独" class="headerlink" title="2. 剪枝实战题目解析：数独"></a>2. 剪枝实战题目解析：数独</h5><h6 id="实战题目-8"><a href="#实战题目-8" class="headerlink" title="实战题目"></a>实战题目</h6><ul>
+<h5 id="2-剪枝实战题目解析：数独"><a href="#2-剪枝实战题目解析：数独" class="headerlink" title="2.      剪枝实战题目解析：数独"></a>2.      剪枝实战题目解析：数独</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/climbing-stairs/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/climbing-stairs/</a></li>
 <li><a href="https://leetcode-cn.com/problems/generate-parentheses/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/generate-parentheses/</a></li>
 <li><a href="https://leetcode-cn.com/problems/n-queens/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-queens</a></li>
 <li><a href="https://leetcode-cn.com/problems/valid-sudoku/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-sudoku/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/sudoku-solver/#/description" target="_blank" rel="noopener">https://leetcode-cn.com/problems/sudoku-solver/#/description</a></li>
 </ul>
-<h5 id="3-双向BFS的实现、特性和题解"><a href="#3-双向BFS的实现、特性和题解" class="headerlink" title="3. 双向BFS的实现、特性和题解"></a>3. 双向BFS的实现、特性和题解</h5><h6 id="实战题目-9"><a href="#实战题目-9" class="headerlink" title="实战题目"></a>实战题目</h6><ul>
+<h5 id="3-双向BFS的实现、特性和题解"><a href="#3-双向BFS的实现、特性和题解" class="headerlink" title="3.      双向BFS的实现、特性和题解"></a>3.      双向BFS的实现、特性和题解</h5><p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/word-ladder/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/word-ladder/</a></li>
 <li><a href="https://leetcode-cn.com/problems/minimum-genetic-mutation/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/minimum-genetic-mutation/</a></li>
 </ul>
-<h6 id="课后作业-8"><a href="#课后作业-8" class="headerlink" title="课后作业"></a>课后作业</h6><ul>
+<p>课后作业</p>
+<ul>
 <li>总结双向 BFS 代码模版，请同学们提交在第 6 周学习总结中。</li>
 </ul>
-<h5 id="4-启发式搜索的实现、特性和题解"><a href="#4-启发式搜索的实现、特性和题解" class="headerlink" title="4. 启发式搜索的实现、特性和题解"></a>4. 启发式搜索的实现、特性和题解</h5><h6 id="参考链接-19"><a href="#参考链接-19" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h5 id="4-启发式搜索的实现、特性和题解"><a href="#4-启发式搜索的实现、特性和题解" class="headerlink" title="4.      启发式搜索的实现、特性和题解"></a>4.      启发式搜索的实现、特性和题解</h5><p>参考链接</p>
+<ul>
 <li><a href="https://shimo.im/docs/CXvjHyWhpQcxXjcw/" target="_blank" rel="noopener">A* 代码模板</a></li>
 <li><a href="https://dataaspirant.com/2015/04/11/five-most-popular-similarity-measures-implementation-in-python/" target="_blank" rel="noopener">相似度测量方法</a></li>
 <li><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/discuss/313347/A*-search-in-Python" target="_blank" rel="noopener">二进制矩阵中的最短路径的 A* 解法</a></li>
 <li><a href="https://zxi.mytechroad.com/blog/searching/8-puzzles-bidirectional-astar-vs-bidirectional-bfs/" target="_blank" rel="noopener">8 puzzles 解法比较</a></li>
 </ul>
-<h6 id="实战题目-10"><a href="#实战题目-10" class="headerlink" title="实战题目"></a>实战题目</h6><ul>
+<p>实战题目</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/shortest-path-in-binary-matrix/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/shortest-path-in-binary-matrix/</a></li>
 <li><a href="https://leetcode-cn.com/problems/sliding-puzzle/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/sliding-puzzle/</a></li>
 <li><a href="https://leetcode-cn.com/problems/sudoku-solver/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/sudoku-solver/</a></li>
 </ul>
-<h6 id="A-代码模板"><a href="#A-代码模板" class="headerlink" title="A*代码模板"></a>A*代码模板</h6><pre><code class="lang-java">def AstarSearch(graph, start, end):
+<p>A*代码模板</p>
+<pre><code class="lang-java">def AstarSearch(graph, start, end):
 
     pq = collections.priority_queue() # 优先级 —&gt; 估价函数
     pq.append([start]) 
@@ -895,17 +1031,21 @@ def DFS(self, tree):
    unvisited = [node for node in nodes if node not in visited]
         pq.push(unvisited)
 </code></pre>
-<h4 id="第十五课-红黑树和AVL树"><a href="#第十五课-红黑树和AVL树" class="headerlink" title="第十五课  红黑树和AVL树"></a>第十五课  红黑树和AVL树</h4><h5 id="AVL树和红黑树的实现和特性"><a href="#AVL树和红黑树的实现和特性" class="headerlink" title="AVL树和红黑树的实现和特性"></a>AVL树和红黑树的实现和特性</h5><h6 id="参考链接-20"><a href="#参考链接-20" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第十五课-红黑树和AVL树"><a href="#第十五课-红黑树和AVL树" class="headerlink" title="第十五课     红黑树和AVL树"></a>第十五课     红黑树和AVL树</h4><h5 id="AVL树和红黑树的实现和特性"><a href="#AVL树和红黑树的实现和特性" class="headerlink" title="AVL树和红黑树的实现和特性"></a>AVL树和红黑树的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree" target="_blank" rel="noopener">平衡树</a></li>
 </ul>
-<h3 id="第七周"><a href="#第七周" class="headerlink" title="第七周"></a>第七周</h3><h4 id="第十六课-位运算"><a href="#第十六课-位运算" class="headerlink" title="第十六课   位运算"></a>第十六课   位运算</h4><h5 id="1-位运算基础及实战要点"><a href="#1-位运算基础及实战要点" class="headerlink" title="1. 位运算基础及实战要点"></a>1. 位运算基础及实战要点</h5><h6 id="参考链接-21"><a href="#参考链接-21" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第七周"><a href="#第七周" class="headerlink" title="第七周"></a>第七周</h4><h4 id="第十六课-位运算"><a href="#第十六课-位运算" class="headerlink" title="第十六课     位运算"></a>第十六课     位运算</h4><h5 id="1-位运算基础及实战要点"><a href="#1-位运算基础及实战要点" class="headerlink" title="1.      位运算基础及实战要点"></a>1.      位运算基础及实战要点</h5><p>参考链接</p>
+<ul>
 <li><a href="https://zh.wikihow.com/从十进制转换为二进制" target="_blank" rel="noopener">如何从十进制转换为二进制</a></li>
 </ul>
-<h5 id="2-位运算实战题目解析"><a href="#2-位运算实战题目解析" class="headerlink" title="2. 位运算实战题目解析"></a>2. 位运算实战题目解析</h5><h6 id="参考链接-22"><a href="#参考链接-22" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h5 id="2-位运算实战题目解析"><a href="#2-位运算实战题目解析" class="headerlink" title="2.      位运算实战题目解析"></a>2.      位运算实战题目解析</h5><p>参考链接</p>
+<ul>
 <li><a href="https://shimo.im/docs/rHTyt8hcpT6D9Tj8/" target="_blank" rel="noopener">N 皇后位运算代码示例</a></li>
 </ul>
-<h6 id="N皇后位运算代码示例"><a href="#N皇后位运算代码示例" class="headerlink" title="N皇后位运算代码示例"></a>N皇后位运算代码示例</h6><pre><code class="lang-java">Python 版本
-def totalNQueens(self, n): 
+<p>N皇后位运算代码示例：</p>
+<p>1）<strong>Python 版本</strong></p>
+<pre><code>def totalNQueens(self, n): 
     if n &lt; 1: return [] 
     self.count = 0 
     self.DFS(n, 0, 0, 0, 0) 
@@ -924,10 +1064,8 @@ def DFS(self, n, row, cols, pie, na):
         bits = bits &amp; (bits — 1) # 表示在p位置上放入皇后
         self.DFS(n, row + 1, cols | p, (pie | p) &lt;&lt; 1, (na | p) &gt;&gt; 1) 
         # 不需要revert  cols, pie, na 的状态
-
-
-Java 版本
-class Solution {
+</code></pre><p>2）<strong>Java 版本</strong></p>
+<pre><code>class Solution {
     private int size; 
     private int count;
 
@@ -951,15 +1089,8 @@ public int totalNQueens(int n) {
     return count; 
   } 
 }
-
-
-
-
-附带非位运算判重（Python）
-
-
-
-def solveNQueens(self, n):
+</code></pre><p>3）附带非位运算判重（Python）</p>
+<pre><code>def solveNQueens(self, n):
   def DFS(queens, xy_dif, xy_sum):
     p = len(queens)
     if p==n:
@@ -972,8 +1103,8 @@ def solveNQueens(self, n):
   result = []
   DFS([],[],[])
   return [ [&quot;.&quot;*i + &quot;Q&quot; + &quot;.&quot;*(n-i-1) for i in sol] for sol in result]
-</code></pre>
-<h6 id="实战题目-课后作业-4"><a href="#实战题目-课后作业-4" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h6><ul>
+</code></pre><p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/number-of-1-bits/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/number-of-1-bits/</a></li>
 <li><a href="https://leetcode-cn.com/problems/power-of-two/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/power-of-two/</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-bits/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-bits/</a></li>
@@ -981,41 +1112,43 @@ def solveNQueens(self, n):
 <li><a href="https://leetcode-cn.com/problems/n-queens-ii/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/n-queens-ii/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/counting-bits/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/counting-bits/description/</a></li>
 </ul>
-<h4 id="第十七课-布隆过滤器和LRU缓存"><a href="#第十七课-布隆过滤器和LRU缓存" class="headerlink" title="第十七课   布隆过滤器和LRU缓存"></a>第十七课   布隆过滤器和LRU缓存</h4><h5 id="1-布隆过滤器的实现及应用"><a href="#1-布隆过滤器的实现及应用" class="headerlink" title="1. 布隆过滤器的实现及应用"></a>1. 布隆过滤器的实现及应用</h5><h6 id="参考链接-23"><a href="#参考链接-23" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第十七课-布隆过滤器和LRU缓存"><a href="#第十七课-布隆过滤器和LRU缓存" class="headerlink" title="第十七课     布隆过滤器和LRU缓存"></a>第十七课     布隆过滤器和LRU缓存</h4><h5 id="1-布隆过滤器的实现及应用"><a href="#1-布隆过滤器的实现及应用" class="headerlink" title="1.      布隆过滤器的实现及应用"></a>1.      布隆过滤器的实现及应用</h5><p>参考链接</p>
+<ul>
 <li><p><a href="https://www.cnblogs.com/cpselvis/p/6265825.html" target="_blank" rel="noopener">布隆过滤器的原理和实现</a></p>
 </li>
 <li><p><a href="https://blog.csdn.net/tianyaleixiaowu/article/details/74721877" target="_blank" rel="noopener">使用布隆过滤器解决缓存击穿、垃圾邮件识别、集合判重</a></p>
 </li>
 <li><p><a href="https://shimo.im/docs/xKwrcwrDxRv3QpKG/" target="_blank" rel="noopener">布隆过滤器 Python 代码示例</a></p>
-<h6 id="布隆过滤器Python代码示例"><a href="#布隆过滤器Python代码示例" class="headerlink" title="布隆过滤器Python代码示例"></a>布隆过滤器Python代码示例</h6><pre><code class="lang-java">from bitarray import bitarray 
-import mmh3 
-
-class BloomFilter: 
-    def __init__(self, size, hash_num): 
-        self.size = size 
-        self.hash_num = hash_num 
-        self.bit_array = bitarray(size) 
-        self.bit_array.setall(0) 
-
-    def add(self, s): 
-        for seed in range(self.hash_num): 
-            result = mmh3.hash(s, seed) % self.size 
-            self.bit_array[result] = 1 
-
-    def lookup(self, s): 
-        for seed in range(self.hash_num): 
-            result = mmh3.hash(s, seed) % self.size 
-            if self.bit_array[result] == 0: 
-                return &quot;Nope&quot; 
-        return &quot;Probably&quot; 
-
-bf = BloomFilter(500000, 7) 
-bf.add(&quot;dantezhao&quot;) 
-print (bf.lookup(&quot;dantezhao&quot;)) 
-print (bf.lookup(&quot;yyj&quot;))
-</code></pre>
 </li>
 </ul>
+<p>  布隆过滤器Python代码示例</p>
+<pre><code class="lang-java">  from bitarray import bitarray 
+  import mmh3 
+
+  class BloomFilter: 
+      def __init__(self, size, hash_num): 
+          self.size = size 
+          self.hash_num = hash_num 
+          self.bit_array = bitarray(size) 
+          self.bit_array.setall(0) 
+
+      def add(self, s): 
+          for seed in range(self.hash_num): 
+              result = mmh3.hash(s, seed) % self.size 
+              self.bit_array[result] = 1 
+
+      def lookup(self, s): 
+          for seed in range(self.hash_num): 
+              result = mmh3.hash(s, seed) % self.size 
+              if self.bit_array[result] == 0: 
+                  return &quot;Nope&quot; 
+          return &quot;Probably&quot; 
+
+  bf = BloomFilter(500000, 7) 
+  bf.add(&quot;dantezhao&quot;) 
+  print (bf.lookup(&quot;dantezhao&quot;)) 
+  print (bf.lookup(&quot;yyj&quot;))
+</code></pre>
 <ul>
 <li><p><a href="https://www.geeksforgeeks.org/bloom-filters-introduction-and-python-implementation/" target="_blank" rel="noopener">布隆过滤器 Python 实现示例</a></p>
 </li>
@@ -1026,12 +1159,14 @@ print (bf.lookup(&quot;yyj&quot;))
 <li><p><a href="https://github.com/Baqend/Orestes-Bloomfilter" target="_blank" rel="noopener">布隆过滤器 Java 实现示例 2</a></p>
 </li>
 </ul>
-<h5 id="2-LRU-Cache的实现、应用和题解"><a href="#2-LRU-Cache的实现、应用和题解" class="headerlink" title="2. LRU Cache的实现、应用和题解"></a>2. LRU Cache的实现、应用和题解</h5><h6 id="参考链接-24"><a href="#参考链接-24" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h5 id="2-LRU-Cache的实现、应用和题解"><a href="#2-LRU-Cache的实现、应用和题解" class="headerlink" title="2.      LRU Cache的实现、应用和题解"></a>2.      LRU Cache的实现、应用和题解</h5><p>参考链接</p>
+<ul>
 <li><a href="https://www.sqlpassion.at/archive/2018/01/06/understanding-the-meltdown-exploit-in-my-own-simple-words/" target="_blank" rel="noopener">Understanding the Meltdown exploit</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Cache_replacement_policies" target="_blank" rel="noopener">替换算法总揽</a></li>
 <li><a href="https://shimo.im/docs/tTxRkGwJpXG6WkGY/" target="_blank" rel="noopener">LRU Cache Python 代码示例</a></li>
 </ul>
-<h6 id="LRU-Cache-Python代码示例"><a href="#LRU-Cache-Python代码示例" class="headerlink" title="LRU Cache Python代码示例"></a>LRU Cache Python代码示例</h6><pre><code class="lang-java">class LRUCache(object): 
+<p>LRU Cache Python代码示例</p>
+<pre><code class="lang-java">class LRUCache(object): 
 
     def __init__(self, capacity): 
         self.dic = collections.OrderedDict() 
@@ -1054,43 +1189,52 @@ print (bf.lookup(&quot;yyj&quot;))
                 self.dic.popitem(last=False) 
         self.dic[key] = value
 </code></pre>
-<h6 id="实战题目-课后作业-5"><a href="#实战题目-课后作业-5" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h6><ul>
+<p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/lru-cache/#/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/lru-cache/#/</a></li>
 </ul>
-<h4 id="第十八课-排序算法"><a href="#第十八课-排序算法" class="headerlink" title="第十八课   排序算法"></a>第十八课   排序算法</h4><h5 id="1-初级排序和高级排序的实现和特性"><a href="#1-初级排序和高级排序的实现和特性" class="headerlink" title="1. 初级排序和高级排序的实现和特性"></a>1. 初级排序和高级排序的实现和特性</h5><h6 id="参考链接-25"><a href="#参考链接-25" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第十八课-排序算法"><a href="#第十八课-排序算法" class="headerlink" title="第十八课     排序算法"></a>第十八课     排序算法</h4><h5 id="1-初级排序和高级排序的实现和特性"><a href="#1-初级排序和高级排序的实现和特性" class="headerlink" title="1.      初级排序和高级排序的实现和特性"></a>1.      初级排序和高级排序的实现和特性</h5><p>参考链接</p>
+<ul>
 <li><a href="https://www.cnblogs.com/onepixel/p/7674659.html" target="_blank" rel="noopener">十大经典排序算法</a></li>
 <li><a href="https://shimo.im/docs/98KjvGwwGpTpYGKy/" target="_blank" rel="noopener">快速排序代码示例</a></li>
 <li><a href="https://shimo.im/docs/YqgG6vtdKwkXJkWx/" target="_blank" rel="noopener">归并排序代码示例</a></li>
 <li><a href="https://shimo.im/docs/6kRVHRphpgjHgCtx/" target="_blank" rel="noopener">堆排序代码示例</a></li>
 <li>直播课回顾: <a href="https://pan.baidu.com/s/1sFuZ8GjDCXy5mPCNLZhHxw" target="_blank" rel="noopener">https://pan.baidu.com/s/1sFuZ8GjDCXy5mPCNLZhHxw </a>提取码: 2rdy</li>
 </ul>
-<h6 id="课后作业-9"><a href="#课后作业-9" class="headerlink" title="课后作业"></a>课后作业</h6><p>用自己熟悉的编程语言，手写各种初级排序代码，提交到第 7 周学习总结中。</p>
-<h5 id="2-特殊排序及实战题目详解"><a href="#2-特殊排序及实战题目详解" class="headerlink" title="2. 特殊排序及实战题目详解"></a>2. 特殊排序及实战题目详解</h5><h6 id="参考链接-26"><a href="#参考链接-26" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<p>课后作业</p>
+<p>用自己熟悉的编程语言，手写各种初级排序代码，提交到第 7 周学习总结中。</p>
+<h5 id="2-特殊排序及实战题目详解"><a href="#2-特殊排序及实战题目详解" class="headerlink" title="2.      特殊排序及实战题目详解"></a>2.      特殊排序及实战题目详解</h5><p>参考链接</p>
+<ul>
 <li><a href="https://www.cnblogs.com/onepixel/p/7674659.html" target="_blank" rel="noopener">十大经典排序算法</a></li>
 <li><a href="https://www.bilibili.com/video/av25136272" target="_blank" rel="noopener">9 种经典排序算法可视化动画</a></li>
 <li><a href="https://www.bilibili.com/video/av63851336" target="_blank" rel="noopener">6 分钟看完 15 种排序算法动画展示</a></li>
 </ul>
-<h6 id="实战题目-课后作业-6"><a href="#实战题目-课后作业-6" class="headerlink" title="实战题目 / 课后作业"></a>实战题目 / 课后作业</h6><ul>
+<p>实战题目 / 课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/relative-sort-array/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/relative-sort-array/</a></li>
 <li><a href="https://leetcode-cn.com/problems/valid-anagram/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-anagram/</a></li>
 <li><a href="https://leetcode-cn.com/problems/design-a-leaderboard/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/design-a-leaderboard/</a></li>
 <li><a href="https://leetcode-cn.com/problems/merge-intervals/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/merge-intervals/</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-pairs/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-pairs/</a></li>
 </ul>
-<h3 id="第八周"><a href="#第八周" class="headerlink" title="第八周"></a>第八周</h3><h4 id="第十九课-高级动态规划"><a href="#第十九课-高级动态规划" class="headerlink" title="第十九课   高级动态规划"></a>第十九课   高级动态规划</h4><h5 id="1-动态规划、状态转移方程串讲"><a href="#1-动态规划、状态转移方程串讲" class="headerlink" title="1. 动态规划、状态转移方程串讲"></a>1. 动态规划、状态转移方程串讲</h5><h6 id="参考链接-27"><a href="#参考链接-27" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第八周"><a href="#第八周" class="headerlink" title="第八周"></a>第八周</h4><h4 id="第十九课-高级动态规划"><a href="#第十九课-高级动态规划" class="headerlink" title="第十九课     高级动态规划"></a>第十九课     高级动态规划</h4><h5 id="1-动态规划、状态转移方程串讲"><a href="#1-动态规划、状态转移方程串讲" class="headerlink" title="1.      动态规划、状态转移方程串讲"></a>1.      动态规划、状态转移方程串讲</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/climbing-stairs/" target="_blank" rel="noopener">爬楼梯</a></li>
 <li><a href="https://leetcode-cn.com/problems/unique-paths/" target="_blank" rel="noopener">不同路径</a></li>
 <li><a href="https://leetcode-cn.com/problems/house-robber/" target="_blank" rel="noopener">打家劫舍</a></li>
 <li><a href="https://leetcode-cn.com/problems/minimum-path-sum/" target="_blank" rel="noopener">最小路径和</a></li>
 <li><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/" target="_blank" rel="noopener">股票买卖</a></li>
 </ul>
-<h6 id="课后作业-10"><a href="#课后作业-10" class="headerlink" title="课后作业"></a>课后作业</h6><p>在第 8 周学习总结中，写出<a href="https://leetcode-cn.com/problems/unique-paths-ii/" target="_blank" rel="noopener">不同路径 2 </a>这道题目的状态转移方程。</p>
-<h5 id="2-高级动态规划题目详解"><a href="#2-高级动态规划题目详解" class="headerlink" title="2. 高级动态规划题目详解"></a>2. 高级动态规划题目详解</h5><h6 id="参考链接-28"><a href="#参考链接-28" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<p>课后作业</p>
+<p>在第 8 周学习总结中，写出<a href="https://leetcode-cn.com/problems/unique-paths-ii/" target="_blank" rel="noopener">不同路径 2 </a>这道题目的状态转移方程。</p>
+<h5 id="2-高级动态规划题目详解"><a href="#2-高级动态规划题目详解" class="headerlink" title="2.      高级动态规划题目详解"></a>2.      高级动态规划题目详解</h5><p>参考链接</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/climbing-stairs/" target="_blank" rel="noopener">爬楼梯</a></li>
 <li><a href="https://leetcode-cn.com/problems/min-cost-climbing-stairs/" target="_blank" rel="noopener">使用最小花费爬楼梯</a></li>
 <li><a href="https://leetcode-cn.com/problems/edit-distance/" target="_blank" rel="noopener">编辑距离</a></li>
 </ul>
-<h6 id="课后作业-11"><a href="#课后作业-11" class="headerlink" title="课后作业"></a>课后作业</h6><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/longest-increasing-subsequence/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-increasing-subsequence/</a></li>
 <li><a href="https://leetcode-cn.com/problems/decode-ways/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/decode-ways/</a></li>
 <li><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-valid-parentheses/</a></li>
@@ -1098,12 +1242,14 @@ print (bf.lookup(&quot;yyj&quot;))
 <li><a href="https://leetcode-cn.com/problems/distinct-subsequences/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/distinct-subsequences/</a></li>
 <li><a href="https://leetcode-cn.com/problems/race-car/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/race-car/</a></li>
 </ul>
-<h4 id="第二十课-字符串算法"><a href="#第二十课-字符串算法" class="headerlink" title="第二十课   字符串算法"></a>第二十课   字符串算法</h4><h5 id="1-字符串基础知识和引申题目"><a href="#1-字符串基础知识和引申题目" class="headerlink" title="1. 字符串基础知识和引申题目"></a>1. 字符串基础知识和引申题目</h5><h6 id="参考链接-29"><a href="#参考链接-29" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h4 id="第二十课-字符串算法"><a href="#第二十课-字符串算法" class="headerlink" title="第二十课     字符串算法"></a>第二十课     字符串算法</h4><h5 id="1-字符串基础知识和引申题目"><a href="#1-字符串基础知识和引申题目" class="headerlink" title="1.      字符串基础知识和引申题目"></a>1.      字符串基础知识和引申题目</h5><p>参考链接</p>
+<ul>
 <li><a href="https://lemire.me/blog/2017/07/07/are-your-strings-immutable/" target="_blank" rel="noopener">不可变字符串</a></li>
 <li><a href="https://shimo.im/docs/KkDKkpWxjjrJXdpY/" target="_blank" rel="noopener">Atoi 代码示例</a></li>
 </ul>
-<h6 id="Atoi代码示例"><a href="#Atoi代码示例" class="headerlink" title="Atoi代码示例"></a>Atoi代码示例</h6><pre><code class="lang-java">Java 版本
-public int myAtoi(String str) {
+<p>Atoi代码示例：</p>
+<p>1）<strong>Java 版本</strong></p>
+<pre><code>public int myAtoi(String str) {
     int index = 0, sign = 1, total = 0;
     //1. Empty string
     if(str.length() == 0) return 0;
@@ -1133,10 +1279,8 @@ public int myAtoi(String str) {
     }
     return total * sign;
 }
-
-
-Python 版本
-class Solution(object):
+</code></pre><p>2）<strong>Python 版本</strong></p>
+<pre><code>class Solution(object):
 
     def myAtoi(self, s):
 
@@ -1154,15 +1298,16 @@ class Solution(object):
             i += 1
 
         return max(-2**31, min(sign * ret,2**31-1))
-</code></pre>
-<h6 id="字符串基础问题"><a href="#字符串基础问题" class="headerlink" title="字符串基础问题"></a>字符串基础问题</h6><ul>
+</code></pre><p>字符串基础问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/to-lower-case/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/to-lower-case/</a></li>
 <li><a href="https://leetcode-cn.com/problems/length-of-last-word/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/length-of-last-word/</a></li>
 <li><a href="https://leetcode-cn.com/problems/jewels-and-stones/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/jewels-and-stones/</a></li>
 <li><a href="https://leetcode-cn.com/problems/first-unique-character-in-a-string/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/first-unique-character-in-a-string/</a></li>
 <li><a href="https://leetcode-cn.com/problems/string-to-integer-atoi/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/string-to-integer-atoi/</a></li>
 </ul>
-<h6 id="字符串操作问题"><a href="#字符串操作问题" class="headerlink" title="字符串操作问题"></a>字符串操作问题</h6><ul>
+<p>字符串操作问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/longest-common-prefix/description/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-common-prefix/description/</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-string" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-string</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-string-ii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-string-ii/</a></li>
@@ -1170,55 +1315,61 @@ class Solution(object):
 <li><a href="https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-only-letters/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-only-letters/</a></li>
 </ul>
-<h6 id="异位词问题"><a href="#异位词问题" class="headerlink" title="异位词问题"></a>异位词问题</h6><ul>
+<p>异位词问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/valid-anagram/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-anagram/</a></li>
 <li><a href="https://leetcode-cn.com/problems/group-anagrams/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/group-anagrams/</a></li>
 <li><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/</a></li>
 </ul>
-<h6 id="回文串问题"><a href="#回文串问题" class="headerlink" title="回文串问题"></a>回文串问题</h6><ul>
+<p>回文串问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/valid-palindrome/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-palindrome/</a></li>
 <li><a href="https://leetcode-cn.com/problems/valid-palindrome-ii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/valid-palindrome-ii/</a></li>
 <li><a href="https://leetcode-cn.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-palindromic-substring/</a></li>
 </ul>
-<h5 id="2-高级字符串算法"><a href="#2-高级字符串算法" class="headerlink" title="2. 高级字符串算法"></a>2. 高级字符串算法</h5><h6 id="最长子串、子序列问题"><a href="#最长子串、子序列问题" class="headerlink" title="最长子串、子序列问题"></a>最长子串、子序列问题</h6><ul>
+<h5 id="2-高级字符串算法"><a href="#2-高级字符串算法" class="headerlink" title="2.      高级字符串算法"></a>2.      高级字符串算法</h5><p>最长子串、子序列问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/longest-common-subsequence/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-common-subsequence/</a></li>
 <li><a href="https://leetcode-cn.com/problems/edit-distance/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/edit-distance/</a></li>
 <li><a href="https://leetcode-cn.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-palindromic-substring/</a></li>
 </ul>
-<h6 id="字符串-DP-问题"><a href="#字符串-DP-问题" class="headerlink" title="字符串 +DP 问题"></a>字符串 +DP 问题</h6><ul>
+<p>字符串 +DP 问题</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/regular-expression-matching/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/regular-expression-matching/</a></li>
 <li><a href="https://leetcode-cn.com/problems/regular-expression-matching/solution/ji-yu-guan-fang-ti-jie-gen-xiang-xi-de-jiang-jie-b/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/regular-expression-matching/solution/ji-yu-guan-fang-ti-jie-gen-xiang-xi-de-jiang-jie-b/</a></li>
 <li><a href="https://leetcode-cn.com/problems/wildcard-matching/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/wildcard-matching/</a></li>
 <li><a href="https://leetcode-cn.com/problems/distinct-subsequences/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/distinct-subsequences/</a></li>
 </ul>
-<h5 id="3-字符串匹配算法"><a href="#3-字符串匹配算法" class="headerlink" title="3. 字符串匹配算法"></a>3. 字符串匹配算法</h5><h6 id="参考链接-30"><a href="#参考链接-30" class="headerlink" title="参考链接"></a>参考链接</h6><ul>
+<h5 id="3-字符串匹配算法"><a href="#3-字符串匹配算法" class="headerlink" title="3.      字符串匹配算法"></a>3.      字符串匹配算法</h5><p>参考链接</p>
+<ul>
 <li><p><a href="http://www.ruanyifeng.com/blog/2013/05/boyer-moore_string_search_algorithm.html" target="_blank" rel="noopener">Boyer-Moore 算法</a></p>
 </li>
 <li><p><a href="https://blog.csdn.net/u012505432/article/details/52210975" target="_blank" rel="noopener">Sunday 算法</a></p>
 </li>
 <li><p><a href="https://shimo.im/docs/dQDxQW8yXPXxh3Hg/" target="_blank" rel="noopener">字符串匹配暴力法代码示例</a></p>
-<h6 id="字符串匹配暴力法代码示例"><a href="#字符串匹配暴力法代码示例" class="headerlink" title="字符串匹配暴力法代码示例"></a>字符串匹配暴力法代码示例</h6><pre><code class="lang-java">public static int forceSearch(String txt, String pat) {
-    int M = txt.length();
-    int N = pat.length();
-
-    for (int i = 0; i &lt;= M - N; i++) {
-        int j;
-        for (j = 0; j &lt; N; j++) {
-            if (txt.charAt(i + j) != pat.charAt(j))
-                break;
-        }
-        if (j == N) {
-            return i;
-        }
-        // 更加聪明？ 
-        // 1. 预先判断 hash(txt.substring(i, M)) == hash(pat)
-        // 2. KMP 
-    }
-    return -1;
-}
-</code></pre>
 </li>
 </ul>
+<p>  字符串匹配暴力法代码示例</p>
+<pre><code class="lang-java">  public static int forceSearch(String txt, String pat) {
+      int M = txt.length();
+      int N = pat.length();
+
+      for (int i = 0; i &lt;= M - N; i++) {
+          int j;
+          for (j = 0; j &lt; N; j++) {
+              if (txt.charAt(i + j) != pat.charAt(j))
+                  break;
+          }
+          if (j == N) {
+              return i;
+          }
+          // 更加聪明？ 
+          // 1. 预先判断 hash(txt.substring(i, M)) == hash(pat)
+          // 2. KMP 
+      }
+      return -1;
+  }
+</code></pre>
 <ul>
 <li><p><a href="https://shimo.im/docs/KXDdkT99TVtXvTXP/" target="_blank" rel="noopener">Rabin-Karp 代码示例</a></p>
 <pre><code class="lang-java">public final static int D = 256;
@@ -1266,7 +1417,8 @@ static int RabinKarpSerach(String txt, String pat) {
 <li><p><a href="http://www.ruanyifeng.com/blog/2013/05/Knuth–Morris–Pratt_algorithm.html" target="_blank" rel="noopener">字符串匹配的 KMP 算法</a></p>
 </li>
 </ul>
-<h6 id="课后作业-12"><a href="#课后作业-12" class="headerlink" title="课后作业"></a>课后作业</h6><ul>
+<p>课后作业</p>
+<ul>
 <li><a href="https://leetcode-cn.com/problems/first-unique-character-in-a-string/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/first-unique-character-in-a-string/</a></li>
 <li><a href="https://leetcode-cn.com/problems/string-to-integer-atoi/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/string-to-integer-atoi/</a></li>
 <li><a href="https://leetcode-cn.com/problems/reverse-string-ii/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/reverse-string-ii/</a></li>
@@ -1281,7 +1433,8 @@ static int RabinKarpSerach(String txt, String pat) {
 <li><a href="https://leetcode-cn.com/problems/longest-valid-parentheses" target="_blank" rel="noopener">https://leetcode-cn.com/problems/longest-valid-parentheses</a></li>
 <li><a href="https://leetcode-cn.com/problems/distinct-subsequences/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/distinct-subsequences/</a></li>
 </ul>
-<h3 id="期末考试"><a href="#期末考试" class="headerlink" title="期末考试"></a>期末考试</h3><h4 id="期末串讲"><a href="#期末串讲" class="headerlink" title="期末串讲"></a>期末串讲</h4><h5 id="参考链接-31"><a href="#参考链接-31" class="headerlink" title="参考链接"></a>参考链接</h5><ul>
+<h4 id="期末考试"><a href="#期末考试" class="headerlink" title="期末考试"></a>期末考试</h4><h5 id="期末串讲"><a href="#期末串讲" class="headerlink" title="期末串讲"></a>期末串讲</h5><p>参考链接</p>
+<ul>
 <li><a href="https://www.bigocheatsheet.com/" target="_blank" rel="noopener">Big O Cheat Sheet</a></li>
 <li><a href="http://naotu.baidu.com/file/b832f043e2ead159d584cca4efb19703?token=7a6a56eb2630548c" target="_blank" rel="noopener">数据结构脑图</a></li>
 <li><a href="http://naotu.baidu.com/file/0a53d3a5343bd86375f348b2831d3610?token=5ab1de1c90d5f3ec" target="_blank" rel="noopener">算法脑图</a></li>
